@@ -177,7 +177,7 @@ int jointPostPkg(const char *IPSTR,const char *PORT,unsigned const char *str,int
 {
 	int strlen_buf=0;
 	char short_buf[4]={0};
-	
+	//add enum for path
 	memset(res_out, 0, 4096);
 	strcat(res_out, "POST /self-enrollment-certificate HTTP/1.1\n");
 	strcat(res_out, "Host: ");
