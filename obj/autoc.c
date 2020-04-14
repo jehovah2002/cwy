@@ -60,7 +60,7 @@ void StringSaveToBin(const char *filename,const char *str,unsigned int str_len)
     int i;
 	if((fp = fopen(filename,"wb")) != NULL)
 	{
-		 for(i=0;i < str_len/2; i++)
+		 for(i=0;i < str_len; i=i+2)
 		 {
 	    	fwrite(str,sizeof(unsigned char),2,fp);
 	    	str=str+2;
@@ -372,7 +372,7 @@ int splitRecvPkg(unsigned char *instr)
 		memset(outstr,0,sizeof(outstr));
 		if(*(p+1) == '\n')
 		{
-			/*判断是不是报文头结束\r\n\r\n*/
+			/*if the pkg is over ?\r\n\r\n*/
 			if(*(p+2) == '\r')
 			{
 				flag=1;
