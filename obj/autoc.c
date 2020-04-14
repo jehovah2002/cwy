@@ -78,7 +78,7 @@ int ReadBinToarr(const char * filename,unsigned char *buf_arr)
     	while(!feof(fp_r))
 		{
 		    fread(&buf_arr[i], sizeof(char), 1, fp_r);
-//		    printf("0x%x, ", buf_arr[i]);
+		    //printf("0x%x, ", buf_arr[i]);
 		    i++;
 		}
 		//printf("\n");

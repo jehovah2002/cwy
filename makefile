@@ -19,20 +19,17 @@ CCFLAGS=-g $(ALL_DIR)
 
 LIBAPI_SO= $(LDIR)/libautoc.so
 MYTEST= $(EDIR)/main
-#M2000TEST= $(EDIR)/m2000test2
-#PERSO= $(EDIR)/perso2
-#PERFTEST= $(EDIR)/perftest
-#RELIATEST= $(EDIR)/reliability_test
+
 
 PROGRAM	= $(LIBAPI_SO) $(MYTEST) 
 #$(M2000TEST) $(PERFTEST) $(RELIATEST)
 
 ########## object files #############
-LIBAPI_OBJ	=$(ODIR)/autoc.o \
+LIBAPI_OBJ	=$(ODIR)/sm3.o \
+			$(ODIR)/autoc.o
 #			$(ODIR)/mizar_common.o \
 ###############################################
-MYTEST_OBJ	=$(ODIR)/main.o 
-
+MYTEST_OBJ	=$(ODIR)/main.o    
 #SPITOOL_OBJ	=$(ODIR)/spitool.o
 #M2000TEST_OBJ=$(ODIR)/m2000test.o \
 #			$(ODIR)/sm4.o
@@ -51,7 +48,7 @@ $(MYTEST)::	$(MYTEST_OBJ)
 	@echo ------ Linking...	------
 	$(CC) -o $(MYTEST) $(MYTEST_OBJ) $(CCFLAGS) $(LIBDIR) $(LIBS) 
 	@echo ------ make $@ OK. ------
-	
+
 
 clean::
 	@$(RM) $(LIBAPI_OBJ) $(LIBAPI_SO) $(MYTEST) $(MYTEST_OBJ)
@@ -63,6 +60,9 @@ cleanbin::
 ##################### common #################### 
 $(ODIR)/main.o:$(SDIR)/main.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/sm3.o:$(ODIR)/sm3.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 $(ODIR)/autoc.o:$(ODIR)/autoc.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+
 
