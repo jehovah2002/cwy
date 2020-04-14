@@ -2,7 +2,7 @@
 
 
  
-int sm3_hash(const unsigned char *message, size_t len, unsigned char *hash, unsigned int *hash_len)
+int sm3_hash(const unsigned char *message, unsigned int len, unsigned char *hash, unsigned int *hash_len)
 {
     EVP_MD_CTX *md_ctx;
     const EVP_MD *md;
@@ -15,11 +15,11 @@ int sm3_hash(const unsigned char *message, size_t len, unsigned char *hash, unsi
     return 0;
 }
 
-int sm3_string_hash(const unsigned char *message, size_t len, unsigned char *hash, unsigned int *hash_len)
+int sm3_string_hash(const unsigned char *message, unsigned int len, unsigned char *hash, unsigned int *hash_len)
 {
 	int buf_len=0;
 	unsigned char buf_arr[4096]={0};
-    buf_len=HexStringToHex(message,buf_arr);
+    buf_len=HexStringToAsc(message,(char *)buf_arr);
 	sm3_hash(buf_arr,buf_len,hash,hash_len);
     return 0;
 }

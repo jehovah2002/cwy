@@ -13,15 +13,20 @@
 //#include <sm3hash.h>
 
 
+unsigned char CharToHex(unsigned char bHex);
+unsigned char HexToChar(unsigned char bChar);
 
 
-int HexStringToHex(const char *str,char *out);
+int AscString2HexString(unsigned char *str,unsigned int str_len,char *out);
+int HexStringToAsc(const char *str,unsigned char *out);
 int arrayToStr(unsigned char *buf, unsigned int buflen,unsigned char *out);
-void StringSaveToBin(const char *filename,const char *str,unsigned int str_len);
+void AscStringSaveToBin(const char *filename,const char *str,unsigned int str_len);
 int ReadBinToarr(const char * filename,unsigned char *buf_arr);
-unsigned char *base64_encode(unsigned char *str);
-int base64_decode(const char *code,unsigned char *res_out);  //need free
-char *memcat(void *dest, size_t dest_len, const char *src, size_t src_len);
+int base64_encode(unsigned char *str,unsigned int str_len,unsigned char *res_out);
+int base64_decode(const char *code,unsigned char *res_out);
+
+
+char *memcat(void *dest, unsigned int dest_len, const char *src, unsigned int src_len);
 
 int jointPostPkg(const char *IPSTR,const char *PORT,unsigned const char *str,int str_len,char *res_out);
 int SendbyPost(const char *IPSTR,const char *PORT,unsigned const char *str,int str_len,unsigned char *res);
@@ -31,8 +36,8 @@ int splitRecvPkg(unsigned char instr[]);
 void respondSave(char *instr,int flag);
 void printrespond();
 
-int sm3_hash(const unsigned char *message, size_t len, unsigned char *hash, unsigned int *hash_len);
-int sm3_string_hash(const unsigned char *message, size_t len, unsigned char *hash, unsigned int *hash_len);
+int sm3_hash(const unsigned char *message, unsigned int len, unsigned char *hash, unsigned int *hash_len);
+int sm3_string_hash(const unsigned char *message, unsigned int len, unsigned char *hash, unsigned int *hash_len);
 
 
 

@@ -8,19 +8,24 @@ void Useage()
 	printf("***  cmd:[File2Hex] <filename>                 ***\n");
 	printf("***       return:<Hex String>                  ***\n");
 	printf("***       Read bin file and print Hex string   ***\n");
-	printf("***  cmd:[B642Hex] <Base 64 Str>               ***\n");
+	printf("***  cmd:[HexStr2Asc] <HexString>              ***\n");
+	printf("***       return:<Asc String>                  ***\n");
+	printf("***  cmd:[Asc2HexStr] <Asc String>             ***\n");
 	printf("***       return:<Hex String>                  ***\n");
-	printf("***       Read bin file and print Hex string   ***\n");
+	printf("***  cmd:[Base2HexStr] <Base64 Str>            ***\n");
+	printf("***       return:<Hex String>                  ***\n");
+	printf("***  cmd:[HexStr2Base] <Hex String>            ***\n");
+	printf("***       return:<Base64 Str>                  ***\n");
 	printf("***  cmd:[senddata] <host ip> <port> <str>     ***\n");
 	printf("***       return:<Response>                    ***\n");
 	printf("***       Send HexString to server             ***\n");
 	printf("***  cmd:[sendoer] <host ip> <port> <filename> ***\n");
-	printf("***       return:<SM3 String>                  ***\n");
-	printf("***       Send HexString to server             ***\n");
+	printf("***       return:<Response>                    ***\n");
+	printf("***       Send OER file to server              ***\n");
 	printf("***  cmd:[sm3file] <filename>                  ***\n");
 	printf("***       return:<SM3 String>                  ***\n");
 	printf("***  cmd:[sm3string] <HexString>               ***\n");
-	printf("***       return:<sm3 string>                  ***\n");
+	printf("***       return:<SM3 String>                  ***\n");
 	printf("**************************************************\n");
 
 }
@@ -40,9 +45,20 @@ int main(int argc, const char *argv[])
 
 	if((argc>2)&&(!strcmp("Hex2File",argv[1])))
 	{
-		str_len=HexStringToHex(argv[3],outstr);
-		printf("argv[3]=[%s],outstr=[%s],str_len=[%d],len=[%ld]\n",argv[3],outstr,str_len,strlen(outstr));
-		StringSaveToBin(argv[2],outstr,str_len);
+		str_len=HexStringToAsc(argv[3],outstr);
+		printf("argv[3]=[%s],outstr=[%s],str_len=[%d],strlen(outstr)=[%ld]\n",argv[3],outstr,str_len,strlen(outstr));
+		AscStringSaveToBin(argv[2],outstr,str_len);
+	}
+	else if((argc>1)&&(!strcmp("HexStr2Asc",argv[1])))
+	{
+		str_len=HexStringToAsc(argv[2],outstr);
+		printf("argv[2]=[%s],outstr=[%s],str_len=[%d],len=[%ld]\n",argv[2],outstr,str_len,strlen(outstr));
+	}
+	else if((argc>1)&&(!strcmp("Asc2HexStr",argv[1])))
+	{
+		str_len=AscString2HexString((unsigned char *)argv[2],strlen(argv[2]),outstr);
+		//arrayToStr(argv[2],strlen(argv[2]),outstr);
+		printf("str_len=[%d],out = [ %s ]\n",str_len,outstr);
 	}
 	else if((argc>1)&&(!strcmp("File2Hex",argv[1])))
 	{
@@ -50,16 +66,23 @@ int main(int argc, const char *argv[])
 		arrayToStr(buf_arr,buf_len,outstr);
 		printf("out = [ %s ]\n", outstr);
 	}
-	else if((argc>1)&&(!strcmp("B642Hex",argv[1])))
+	else if((argc>1)&&(!strcmp("Base2HexStr",argv[1])))
 	{
-		str_len=base64_decode(argv[2],buf_arr);
-		printf("String = [%s] strlen=[%d] \n",buf_arr,str_len);
-		arrayToStr(buf_arr,str_len,outstr);
-
+		buf_len=base64_decode(argv[2],buf_arr);
+		printf("String = [%s] strlen=[%d] \n",buf_arr,buf_len);
+		str_len=arrayToStr(buf_arr,buf_len,outstr);
+		printf("str_len=[%d],out = [ %s ]\n",str_len,outstr);
+	}
+	else if((argc>1)&&(!strcmp("HexStr2Base",argv[1])))
+	{
+		buf_len=HexStringToAsc(argv[2],buf_arr);
+		//printf("str_len=[%d],len=[%ld]\n",buf_len,strlen(buf_arr));
+		str_len=base64_encode(buf_arr,buf_len,outstr);
+		printf("str_len=[%d],out = [ %s ]\n",str_len,outstr);
 	}
 	else if((argc>3)&&(!strcmp("senddata",argv[1])))
 	{
-		str_len=HexStringToHex(argv[4],asn_arr);
+		str_len=HexStringToAsc(argv[4],asn_arr);
 		printf("argv[4]=[%s],asn_arr=[%s],str_len=[%d],len=[%ld]\n",argv[4],asn_arr,str_len,strlen(asn_arr));
 		SendbyPost(argv[2],argv[3],asn_arr,str_len,outstr);
 		ret=splitRecvPkg(outstr);
