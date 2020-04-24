@@ -27,7 +27,8 @@ PROGRAM	= $(LIBAPI_SO) $(MYTEST)
 ########## object files #############
 LIBAPI_OBJ	=$(ODIR)/sm3.o \
 			$(ODIR)/autoc.o \
-			$(ODIR)/common.o
+			$(ODIR)/common.o \
+			$(ODIR)/sm2_point2oct.o
 #			$(ODIR)/mizar_common.o \
 ###############################################
 MYTEST_OBJ	=$(ODIR)/main.o    
@@ -66,6 +67,8 @@ $(ODIR)/sm3.o:$(ODIR)/sm3.c
 $(ODIR)/autoc.o:$(ODIR)/autoc.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 $(ODIR)/common.o:$(ODIR)/common.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/sm2_point2oct.o:$(ODIR)/sm2_point2oct.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 
 

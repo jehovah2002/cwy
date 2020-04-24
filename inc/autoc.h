@@ -39,6 +39,11 @@ void printrespond();
 int sm3_hash(const unsigned char *message, unsigned int len, unsigned char *hash, unsigned int *hash_len);
 int sm3_string_hash(const unsigned char *message, unsigned int len, unsigned char *hash, unsigned int *hash_len);
 
+void sm2_point2oct (unsigned char ucType, unsigned char* pucInX, unsigned char* pucOutXY );
+int untar_x_to_y(const char* ucType, const char* pucInX, unsigned char* pucOutXY);
+
+
+
 
 
 typedef struct {
@@ -62,6 +67,24 @@ typedef struct {
 	char length[8];
 	char str[4096];
 }cicvserverRequest;
+
+typedef enum
+{
+	xonly=0,
+	fill,
+	compressy0,
+	compressy1,
+	uncompress
+}uctype;
+
+
+#define _P  "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF"
+#define _a  "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC"
+#define _b  "28E9FA9E9D9F5E344D5A9E4BCF6509A7F39789F515AB8F92DDBCBD414D940E93"
+#define _n  "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123"
+#define _Gx "32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7"
+#define _Gy "BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0"
+
 
 
 
