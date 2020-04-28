@@ -1,4 +1,5 @@
-#include "autoc.h"
+#include "common.h"
+
 
 unsigned char CharToHex(unsigned char bHex){
     if((bHex>=0)&&(bHex<=9))
@@ -213,6 +214,41 @@ int getnum(char *instr)
 			break;
 	}
 	return i;
+}
+
+void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *input_name)
+{
+	unsigned char outstr[4096]={0};
+
+	memset(outstr,0,sizeof(char)*32);
+	str_len=AscString2HexString((unsigned char *)input,str_len,outstr);
+	printf("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
+
+}
+
+void print_bn(char *pchT, BIGNUM* pBG_p)
+{
+	unsigned char aucY[1024+1] = {0};
+	int iYLen = 0;
+	
+	iYLen = BN_bn2bin ( pBG_p, aucY);
+	print_HexString(aucY, iYLen,pchT);
+}
+
+
+void init_curve_param(int curve_type)
+{
+	if(fp256==curve_type)
+	{
+		HexStringToAsc(_P,g_sm2_P);
+		HexStringToAsc(_a,g_sm2_a);
+		HexStringToAsc(_b,g_sm2_b);
+		HexStringToAsc(_n,g_sm2_n);
+		HexStringToAsc(_Gx,g_sm2_Gx);
+		HexStringToAsc(_Gy,g_sm2_Gy);
+	}
+	else
+		printf("This curve is not currently supported !\n");
 }
 
 

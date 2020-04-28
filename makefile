@@ -15,10 +15,10 @@ ALL_DIR = -I$(INC_DIR)
 LIBDIR = -Wl,-rpath=$(LDIR) -L$(LDIR)
 LIBS = -lautoc -lssl -lcrypto
 
-CCFLAGS=-g $(ALL_DIR) 
+CCFLAGS=-g $(ALL_DIR)
 
 LIBAPI_SO= $(LDIR)/libautoc.so
-MYTEST= $(EDIR)/main
+MYTEST= mytest
 
 
 PROGRAM	= $(LIBAPI_SO) $(MYTEST) 
@@ -28,7 +28,9 @@ PROGRAM	= $(LIBAPI_SO) $(MYTEST)
 LIBAPI_OBJ	=$(ODIR)/sm3.o \
 			$(ODIR)/autoc.o \
 			$(ODIR)/common.o \
-			$(ODIR)/sm2_point2oct.o
+			$(ODIR)/sm2_point2oct.o \
+			$(ODIR)/sm2_create_key_pair.o \
+			$(ODIR)/sm2_sign_and_verify.o \
 #			$(ODIR)/mizar_common.o \
 ###############################################
 MYTEST_OBJ	=$(ODIR)/main.o    
@@ -67,6 +69,10 @@ $(ODIR)/sm3.o:$(ODIR)/sm3.c
 $(ODIR)/autoc.o:$(ODIR)/autoc.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 $(ODIR)/common.o:$(ODIR)/common.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/sm2_create_key_pair.o:$(ODIR)/sm2_create_key_pair.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/sm2_sign_and_verify.o:$(ODIR)/sm2_sign_and_verify.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 $(ODIR)/sm2_point2oct.o:$(ODIR)/sm2_point2oct.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?

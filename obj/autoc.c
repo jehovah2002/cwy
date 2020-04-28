@@ -1,4 +1,6 @@
 #include "autoc.h"
+#include "common.h"
+
 
 cicvserverRequest serverRequest={0};
 cicvserverRespond serverRespond={0};
