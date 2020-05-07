@@ -31,6 +31,7 @@ LIBAPI_OBJ	=$(ODIR)/sm3.o \
 			$(ODIR)/sm2_point2oct.o \
 			$(ODIR)/sm2_create_key_pair.o \
 			$(ODIR)/sm2_sign_and_verify.o \
+			$(ODIR)/sm2crypto.o 
 #			$(ODIR)/mizar_common.o \
 ###############################################
 MYTEST_OBJ	=$(ODIR)/main.o    
@@ -75,6 +76,8 @@ $(ODIR)/sm2_create_key_pair.o:$(ODIR)/sm2_create_key_pair.c
 $(ODIR)/sm2_sign_and_verify.o:$(ODIR)/sm2_sign_and_verify.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 $(ODIR)/sm2_point2oct.o:$(ODIR)/sm2_point2oct.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/sm2crypto.o:$(ODIR)/sm2crypto.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 
 

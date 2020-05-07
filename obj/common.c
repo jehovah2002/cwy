@@ -220,7 +220,7 @@ void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *in
 {
 	unsigned char outstr[4096]={0};
 
-	memset(outstr,0,sizeof(char)*32);
+	memset(outstr,0,sizeof(char)*4096);
 	str_len=AscString2HexString((unsigned char *)input,str_len,outstr);
 	printf("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
 
@@ -228,7 +228,7 @@ void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *in
 
 void print_bn(char *pchT, BIGNUM* pBG_p)
 {
-	unsigned char aucY[1024+1] = {0};
+	unsigned char aucY[2048+1] = {0};
 	int iYLen = 0;
 	
 	iYLen = BN_bn2bin ( pBG_p, aucY);
@@ -249,6 +249,24 @@ void init_curve_param(int curve_type)
 	}
 	else
 		printf("This curve is not currently supported !\n");
+}
+
+BIGNUM *k_creat(const EC_GROUP *ec_group,BN_CTX *ctx)
+{
+	BIGNUM *k;
+	BIGNUM *n;
+	
+	k = BN_CTX_get(ctx);
+	n = BN_CTX_get(ctx);
+	
+	EC_GROUP_get_order(ec_group, n, ctx);
+
+	do {
+		BN_rand_range(k,n);
+	} while (BN_is_zero(k));
+
+	return k;
+
 }
 
 

@@ -7,10 +7,13 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <errno.h>
-#include <openssl/obj_mac.h>
+//#include <openssl/obj_mac.h>
 #include <openssl/evp.h>
 #include <openssl/bn.h>
 #include <openssl/ec.h>
+//#include <openssl/ossl_typ.h>
+
+
 //#include <sm3hash.h>
 
 #ifdef  __cplusplus
@@ -42,6 +45,8 @@ void print_bn(char *pchT, BIGNUM* pBG_p);
 
 
 void init_curve_param(int curve_type);
+BIGNUM *k_creat(const EC_GROUP *ec_group,BN_CTX *ctx);
+
 
 
 #ifdef  __cplusplus
@@ -121,6 +126,7 @@ typedef enum
 	f2m257
 }curve;
 
+typedef int FLAG;
 
 
 #ifndef HEADER_ERROR_CODES_LIST_OF_SM2_CIPHER_H

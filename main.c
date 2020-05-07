@@ -4,6 +4,7 @@
 #include "sm2_sign_and_verify.h"
 #include "sm2_create_key_pair.h"
 #include "sm2_point2oct.h"
+#include "sm2crypto.h"
 
 void Useage()
 {
@@ -46,6 +47,10 @@ void Useage()
 	printf("***  cmd:[verify] <type> <pubkey> <msg> <r> <s>***\n");
 	printf("***                      [64/32]               ***\n");
 	printf("***       return:success or failed             ***\n");
+	printf("***  cmd:[encrypt] <type> <pubkey> <msg>       ***\n");
+	printf("***       return:C1||C2||C3 & datalen          ***\n");
+	printf("***  cmd:[decrypt] <prikey> <msg>              ***\n");
+	printf("***       return:decode_msg & datalen          ***\n");
 	printf("**************************************************\n");
 
 }
@@ -55,11 +60,14 @@ int main(int argc, const char *argv[])
 {
 
 	unsigned char buf_arr[4096]={0};
+	unsigned char buf_out[4096]={0};
 	unsigned char outstr[4096]={0};
 	int buf_len=0;
 	int str_len=0;
 	int ret=0;
 	int i=0;
+	unsigned long buf_long=0;
+	
 	//int msg_len;
 	int error_code;
 	SM2_SIGNATURE_STRUCT sm2_sig_out;
@@ -231,6 +239,51 @@ int main(int argc, const char *argv[])
 			printf("Verify SM2 signature failed! [%d]\n",error_code);
 			return error_code;
 		}
+		printf("/*********************************************************/\n");
+
+	}
+	else if((argc>1)&&(!strcmp("encrypt",argv[1]))&&(NULL!=argv[4]))
+	{
+		if(!((64!=strlen(argv[3]))||(128!=strlen(argv[3]))))
+		{
+			printf("Input error !\n");
+			return 0;
+		}
+		//memcpy(sm2_sig_in->r_coordinate, argv[5], sizeof(sm2_sig_in->r_coordinate));
+		//memcpy(sm2_sig_in->s_coordinate, argv[6], sizeof(sm2_sig_in->s_coordinate));
+		if(0 < ( buf_long = sm2Encrypt_Ex(atoi(argv[2]),
+										argv[3],
+										(unsigned char *)argv[4],
+										strlen(argv[4]),
+										buf_arr)))
+		{
+			str_len=AscString2HexString(buf_arr,buf_long,outstr);
+			printf("outstr = [%s],outlen=[%ld] strlen=[%d]\n",outstr,buf_long,str_len);
+		}
+		else
+			printf("outlen=[%ld] \n",buf_long);
+		printf("/*********************************************************/\n");
+
+	}
+	else if((argc>1)&&(!strcmp("decrypt",argv[1]))&&(NULL!=argv[3]))
+	{
+		if(64!=strlen(argv[2]))
+		{
+			printf("Input error !\n");
+			return 0;
+		}
+		if(0 < ( buf_long = sm2Decrypt_Ex((unsigned char *)argv[2],
+										strlen(argv[2]),
+										(unsigned char *)argv[3],
+										strlen(argv[3]),
+										buf_arr)))
+		{
+			str_len=AscString2HexString(buf_arr,buf_long,outstr);
+			//printf("outstr = [%s],outlen=[%ld] strlen=[%d]\n",outstr,buf_long,str_len);
+			printf("outlen=[%ld] \n",buf_long);
+		}
+		else
+			printf("outlen=[%ld] \n",buf_long);
 		printf("/*********************************************************/\n");
 
 	}

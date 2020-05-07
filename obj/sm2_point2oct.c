@@ -3,18 +3,6 @@
 
 
 /**********************************************************************************************//**
-*  @fn       void sm2_point_ini(void);
-*  @brief    点压缩算法的初始化
-*  
-*  @param   [io] void
-*  @return   - void
-*            -
-*  @bug    (bug修复的描述问题)
-*            - 1.
-*            - 2.
-***************************************************************************************************/
-
-/**********************************************************************************************//**
 	p=FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF
 	a=FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC
 	b=28E9FA9E9D9F5E344D5A9E4BCF6509A7F39789F515AB8F92DDBCBD414D940E93
@@ -22,13 +10,13 @@
 	Gx=32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7
 	Gy=BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0
 
-	A.5.2 Fp上椭圆曲线点的压缩与解压缩方法
-	设P=(xP, yP)是定义在Fp上椭圆曲线E：y2 = x3 +ax+b上的一个点，˜yP为yP的最右边的一个比特，
-	则点P可由xP和比特˜yP 表示。
-	由xP和˜yP恢复yP的方法如下：
-	a) 计算域元素α=(xP^3+aXp+b) modp；
-	b) 计算α modp的平方根β(参见附录B.1.4)，若输出是“不存在平方根”，则报错；
-	c) 若β的最右边比特等于˜yP，则置yP=β；否则置yP = p−β。
+	Compression and decompression of elliptic curve points on Fp:
+	Set P = (xP, yP) is to define the elliptic curve on the Fp E: y2 = a point on the x3 + ax + b, ˜ yP for yP most the right side a bit,
+	The point P can be represented by the xP and bit ˜ yP.
+	The xP and ˜ yP yP recovery method is as follows:
+	A) calculation domain element =(xP^3+aXp+b) modp;
+	B) calculate the square root of the modp (see appendix b.1.4), and report an error if the output is "no square root";
+	C) if the right side of the beta bits equal ˜ yP, buy yP = β;Otherwise, set yP = p−β.
 
 ***************************************************************************************************/
 void sm2_point2oct (unsigned char ucType, unsigned char* pucInX, unsigned char* pucOutXY )
