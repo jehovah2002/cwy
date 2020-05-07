@@ -67,7 +67,7 @@ int main(int argc, const char *argv[])
 	int ret=0;
 	int i=0;
 	unsigned long buf_long=0;
-	
+
 	//int msg_len;
 	int error_code;
 	SM2_SIGNATURE_STRUCT sm2_sig_out;

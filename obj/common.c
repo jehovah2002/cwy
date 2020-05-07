@@ -255,10 +255,10 @@ BIGNUM *k_creat(const EC_GROUP *ec_group,BN_CTX *ctx)
 {
 	BIGNUM *k;
 	BIGNUM *n;
-	
+
 	k = BN_CTX_get(ctx);
 	n = BN_CTX_get(ctx);
-	
+
 	EC_GROUP_get_order(ec_group, n, ctx);
 
 	do {

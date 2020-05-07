@@ -14,26 +14,26 @@ char *res_end="Connection: close";
 
 int jointPostPkg(const char *IPSTR,const char *PORT,unsigned const char *str,int str_len,char *res_out)
 {
-	int strlen_buf=0;
-	char short_buf[4]={0};
-	//add enum for path
-	memset(res_out, 0, 4096);
-	strcat(res_out, "POST /self-enrollment-certificate HTTP/1.1\n");
-	strcat(res_out, "Host: ");
-	strcat(res_out, IPSTR);
-	strcat(res_out, ":");
-	strcat(res_out, PORT);
-	strcat(res_out, "\n");
-	strcat(res_out, "Accept: */*\n");
-	strcat(res_out, "Content-Type: application/octet-stream\n");
-	strcat(res_out, "Content-Length: ");
-	sprintf(short_buf, "%d", str_len);
-	strcat(res_out, short_buf);
-	strcat(res_out, "\n\n");
-	strlen_buf=strlen(res_out);
-	res_out=memcat(res_out, sizeof(char)*strlen_buf,str,sizeof(char)*str_len);
-	return strlen_buf+str_len;
-	
+    int strlen_buf=0;
+    char short_buf[4]={0};
+    //add enum for path
+    memset(res_out, 0, 4096);
+    strcat(res_out, "POST /self-enrollment-certificate HTTP/1.1\n");
+    strcat(res_out, "Host: ");
+    strcat(res_out, IPSTR);
+    strcat(res_out, ":");
+    strcat(res_out, PORT);
+    strcat(res_out, "\n");
+    strcat(res_out, "Accept: */*\n");
+    strcat(res_out, "Content-Type: application/octet-stream\n");
+    strcat(res_out, "Content-Length: ");
+    sprintf(short_buf, "%d", str_len);
+    strcat(res_out, short_buf);
+    strcat(res_out, "\n\n");
+    strlen_buf=strlen(res_out);
+    res_out=memcat(res_out, sizeof(char)*strlen_buf,str,sizeof(char)*str_len);
+    return strlen_buf+str_len;
+
 }
 
 int SendbyPost(const char *IPSTR,const char *PORT,unsigned const char *str,int str_len,unsigned char *res)
