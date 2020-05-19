@@ -116,14 +116,14 @@ int untar_x_to_y(const int ucType, const char* pucInX, unsigned char* pucOutXY)
 		type=1;
 	else
 	{
-		printf("Uncompress type [%d] error!\n",ucType);
+		ERROR_PRINT("Uncompress type [%d] error!\n",ucType);
 		return 0;
 	}
 
 	str_len=HexStringToAsc(pucInX,InXoutstr);
 	if(32!=str_len)
 	{
-		printf("Publickey X length=[%d],error!\n",str_len);
+		ERROR_PRINT("Publickey X length=[%d],error!\n",str_len);
 		return 0;
 	}
 	

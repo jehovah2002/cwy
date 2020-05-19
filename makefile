@@ -27,6 +27,10 @@ PROGRAM	= $(LIBAPI_SO) $(MYTEST)
 ########## object files #############
 LIBAPI_OBJ	=$(ODIR)/sm3.o \
 			$(ODIR)/autoc.o \
+			$(ODIR)/network.o \
+			$(ODIR)/autoasn.o \
+			$(ODIR)/autoasn_encode.o \
+			$(ODIR)/autoasn_decode.o \
 			$(ODIR)/common.o \
 			$(ODIR)/sm2_point2oct.o \
 			$(ODIR)/sm2_create_key_pair.o \
@@ -68,6 +72,14 @@ $(ODIR)/main.o:$(SDIR)/main.c
 $(ODIR)/sm3.o:$(ODIR)/sm3.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 $(ODIR)/autoc.o:$(ODIR)/autoc.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/network.o:$(ODIR)/network.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/autoasn.o:$(ODIR)/autoasn.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/autoasn_encode.o:$(ODIR)/autoasn_encode.c
+	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
+$(ODIR)/autoasn_decode.o:$(ODIR)/autoasn_decode.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?
 $(ODIR)/common.o:$(ODIR)/common.c
 	$(CC) -fPIC -o $@ $(CCFLAGS) -c $?

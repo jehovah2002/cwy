@@ -218,7 +218,7 @@ unsigned long sm2Encrypt(unsigned char *x,
 	//get G
 	c1 = EC_POINT_new(group);
 	k=k_creat(group,ctx);
-	print_bn("k",k);
+	//print_bn("k",k);
 	EC_POINT_mul(group, c1, NULL, G, k, ctx);
 	EC_POINT_point2oct(group, c1, POINT_CONVERSION_UNCOMPRESSED, c1bin, c1binlen, ctx);
 
@@ -226,14 +226,14 @@ unsigned long sm2Encrypt(unsigned char *x,
 	error_code = EC_POINT_is_on_curve(group, P, ctx);
 	if(!error_code)
 	{
-		printf("Points are not equal\n");
+		ERROR_PRINT("Points are not equal\n");
 		goto clean_up;
 	}
 	
 	error_code = EC_POINT_is_at_infinity(group, P);
 	if(error_code)
 	{
-		printf("Point is not on the curve\n");
+		ERROR_PRINT("Point is not on the curve\n");
 		goto clean_up;
 	}
 
@@ -250,10 +250,10 @@ unsigned long sm2Encrypt(unsigned char *x,
 	//print_bn("x2",x2);
 	//print_bn("y2",y2);
 	error_code=my_KDF(x2y2,sizeof(x2y2),tlen,t);
-	printf("my_KDF error_code =[%d] \n",error_code);
+	DEBUG_PRINT("my_KDF error_code =[%d] \n",error_code);
 	if(error_code)
 	{
-		printf("KDF error!\n");
+		ERROR_PRINT("KDF error!\n");
 		goto clean_up;
 	}
 	
@@ -339,16 +339,16 @@ unsigned long sm2Encrypt_Ex(const int keytype,
 	else if((compressy0==keytype)&&(64==strlen(pub_key)))
 	{
 		if(!untar_x_to_y(keytype,pub_key,pub_key_temp))
-				printf("uncompress error!\n");
+				ERROR_PRINT("uncompress error!\n");
 	}
 	else if((compressy1==keytype)&&(64==strlen(pub_key)))
 	{
 		if(!untar_x_to_y(keytype,pub_key,pub_key_temp))
-				printf("uncompress error!\n");
+				ERROR_PRINT("uncompress error!\n");
 	}
 	else
 	{
-		printf("Key type or length error!\n");
+		ERROR_PRINT("Key type or length error!\n");
 		return 0;
 	}
 	memcpy(pub_key_x,pub_key_temp,sizeof(char)*32);
@@ -410,7 +410,7 @@ unsigned long sm2Decrypt(unsigned char *prikey,
 	error_code = EC_POINT_is_on_curve(ec_group, c1, ctx);
     if (!error_code) 
 	{
-        printf("C1 is not on curve !\n");
+        ERROR_PRINT("C1 is not on curve !\n");
 		goto clean_up;
     }
 	if ( !(dC1 = EC_POINT_new(ec_group)) )
@@ -420,13 +420,13 @@ unsigned long sm2Decrypt(unsigned char *prikey,
 	error_code = EC_POINT_is_on_curve(ec_group, dC1, ctx);
     if (!error_code) 
 	{
-        printf("dC1 is not on curve !\n");
+        ERROR_PRINT("dC1 is not on curve !\n");
 		goto clean_up;
     }
 	
 	if ( !(BN_bin2bn(prikey,32, d)) )
 	{
-		printf("Set prikey error !\n");
+		ERROR_PRINT("Set prikey error !\n");
 		goto clean_up;
 	}
 	//print_HexString(prikey, 32, "prikey");
@@ -451,8 +451,8 @@ unsigned long sm2Decrypt(unsigned char *prikey,
 	error_code=my_KDF(x2y2,sizeof(x2y2),tlen,t);
 	if(error_code)
 	{
-		printf("KDF error!\n");
-		printf("my_KDF error_code =[%d] \n",error_code);
+		ERROR_PRINT("KDF error!\n");
+		ERROR_PRINT("my_KDF error_code =[%d] \n",error_code);
 		goto clean_up;
 	}
 
@@ -463,7 +463,7 @@ unsigned long sm2Decrypt(unsigned char *prikey,
         Mlen++;
     }
     M[tlen] = '\0';
-    printf("M'-->%s\n",M);
+    DEBUG_PRINT("M'-->%s\n",M);
 
 	memcpy(outData, M, tlen);
 	ret=tlen;

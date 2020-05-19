@@ -295,7 +295,7 @@ int sm2_sign(const unsigned char *message,
 	unsigned char buf_arr[4096]={0};
 	unsigned char pri_key_temp[32]={0};
 	int msg_len;
-	printf("in sm2_sign\n");
+
 	if(!((64==strlen(pri_key))&&(128==strlen(pub_key)||(64==strlen(pub_key)))))
 		return -1;
 
@@ -308,18 +308,18 @@ int sm2_sign(const unsigned char *message,
 	else if(compressy0==keytype)
 	{
 		if(!untar_x_to_y(keytype,pub_key,pub_key_temp))
-				printf("uncompress error!\n");
+				ERROR_PRINT("uncompress error!\n");
 		memcpy(pub_key_buf+1,pub_key_temp,sizeof(char)*64);
 	}
 	else if(compressy1==keytype)
 	{
 		if(!untar_x_to_y(keytype,pub_key,pub_key_temp))
-				printf("uncompress error!\n");
+				ERROR_PRINT("uncompress error!\n");
 		memcpy(pub_key_buf+1,pub_key_temp,sizeof(char)*64);
 	}
 	else
 	{
-		printf("Key type error!\n");
+		ERROR_PRINT("Key type error!\n");
 		error_code=-1;
 		return error_code;
 	}
@@ -582,18 +582,18 @@ int sm2_verify(const unsigned char *message,
 	else if(compressy0==keytype)
 	{
 		if(!untar_x_to_y(keytype,pub_key,pub_key_temp))
-				printf("uncompress error!\n");
+				ERROR_PRINT("uncompress error!\n");
 		memcpy(pub_key_buf+1,pub_key_temp,sizeof(char)*64);
 	}
 	else if(compressy1==keytype)
 	{
 		if(!untar_x_to_y(keytype,pub_key,pub_key_temp))
-				printf("uncompress error!\n");
+				ERROR_PRINT("uncompress error!\n");
 		memcpy(pub_key_buf+1,pub_key_temp,sizeof(char)*64);
 	}
 	else
 	{
-		printf("Key type error!\n");
+		ERROR_PRINT("Key type error!\n");
 		error_code=-1;
 		return error_code;
 	}
@@ -601,7 +601,7 @@ int sm2_verify(const unsigned char *message,
 	msg_len=HexStringToAsc(message,buf_arr);
 	HexStringToAsc(r,sm2_sig.r_coordinate);
 	HexStringToAsc(s,sm2_sig.s_coordinate);
-	print_HexString(pub_key_buf,65,"pub_key_buf");
+	//print_HexString(pub_key_buf,65,"pub_key_buf");
 	if(error_code = sm2_verify_sig(buf_arr,
 		                        msg_len,
 								g_IDA,
@@ -609,10 +609,10 @@ int sm2_verify(const unsigned char *message,
 								pub_key_buf,
 								&sm2_sig))
 	{
-	   printf("Verify SM2 signature failed!\n");
+	   ERROR_PRINT("Verify SM2 signature failed!\n");
 	   return error_code;
 	}
-	printf("Verify SM2 signature succeeded!\n");
+	DEBUG_PRINT("Verify SM2 signature succeeded!\n");
 	
 	return error_code;
 	

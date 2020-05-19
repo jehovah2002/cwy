@@ -25,6 +25,30 @@ int sm3_string_hash(const unsigned char *message, unsigned int len, unsigned cha
     return 0;
 }
 
+int sm3_string_hash_string(const unsigned char *message, unsigned char *hash)
+{
+	int buf_len=0;
+    int ret=0;
+    int str_len=0;
+	unsigned char buf_in[4096]={0};
+    unsigned char buf_out[128]={0};
+
+    buf_len=HexStringToAsc(message,buf_in);
+    INFO_PRINT("message =[%s]\n",message);
+    //ERROR_PRINT("buf_len =[%d]\n",buf_len);
+	sm3_hash(buf_in,buf_len,buf_out,&str_len);
+    INFO_PRINT("str_len = [%d],buf_len =[%d]\n",str_len,buf_len);
+    if(32!=str_len)
+    {
+        ERROR_PRINT("hash length error .[%d]",str_len);
+        return -1;
+    }
+    ret=AscString2HexString(buf_out,str_len,hash);
+	//arrayToStr(argv[2],strlen(argv[2]),outstr);
+    return ret;
+}
+
+
 
 /*********************************************************/
 int sm3_digest_z(const unsigned char *id,
@@ -118,18 +142,14 @@ int sm3_digest_with_preprocess(const unsigned char *message,
 									pub_key,
 									z_digest) )
 	{
-#ifdef _DEBUG
-           printf("Compute SM3 digest of leading data Z failed at %s, line %d!\n", __FILE__, __LINE__);
-#endif
+       ERROR_PRINT("Compute SM3 digest of leading data Z failed at %s, line %d!\n", __FILE__, __LINE__);
 	   return COMPUTE_SM3_DIGEST_FAIL;	
 	}
 
 	md = EVP_sm3();
         if ( !(md_ctx = EVP_MD_CTX_new()) )
 	{
-#ifdef _DEBUG
-           printf("Allocate a digest context failed at %s, line %d!\n", __FILE__, __LINE__);
-#endif
+       ERROR_PRINT("Allocate a digest context failed at %s, line %d!\n", __FILE__, __LINE__);
 	   return COMPUTE_SM3_DIGEST_FAIL;
 	}
         EVP_DigestInit_ex(md_ctx, md, NULL);

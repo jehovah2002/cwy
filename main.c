@@ -5,6 +5,8 @@
 #include "sm2_create_key_pair.h"
 #include "sm2_point2oct.h"
 #include "sm2crypto.h"
+#include "autoasn.h"
+#include "network.h"
 
 void Useage()
 {
@@ -51,6 +53,7 @@ void Useage()
 	printf("***       return:C1||C2||C3 & datalen          ***\n");
 	printf("***  cmd:[decrypt] <prikey> <msg>              ***\n");
 	printf("***       return:decode_msg & datalen          ***\n");
+    printf("***  cmd:[showtime]                            ***\n");
 	printf("**************************************************\n");
 
 }
@@ -61,12 +64,14 @@ int main(int argc, const char *argv[])
 
 	unsigned char buf_arr[4096]={0};
 	unsigned char buf_out[4096]={0};
-	unsigned char outstr[4096]={0};
+	unsigned char outstr[4096*10]={0};
 	int buf_len=0;
 	int str_len=0;
 	int ret=0;
 	int i=0;
 	unsigned long buf_long=0;
+
+    CicvserverRespond_t serverRespond;
 
 	//int msg_len;
 	int error_code;
@@ -119,19 +124,19 @@ int main(int argc, const char *argv[])
 	{
 		str_len=HexStringToAsc(argv[4],asn_arr);
 		printf("argv[4]=[%s],asn_arr=[%s],str_len=[%d],len=[%ld]\n",argv[4],asn_arr,str_len,strlen(asn_arr));
-		SendbyPost(argv[2],argv[3],asn_arr,str_len,outstr);
-		ret=splitRecvPkg(outstr);
+		SendbyPost("POST","self-enrollment-certificate",argv[2],argv[3],asn_arr,str_len,outstr);
+		ret=splitRecvPkg(outstr,&serverRespond);
 		//printf("recv [%d] arrs!",ret);
-		printrespond();
+		printrespond(&serverRespond);
 	}
 	else if((argc>3)&&(!strcmp("sendoer",argv[1])&&(NULL!=argv[4])))
 	{
 		buf_len=ReadBinToarr(argv[4],buf_arr);
 		printf("filename=[%s],len=[%d]\n",argv[4],buf_len);
-		SendbyPost(argv[2],argv[3],buf_arr,buf_len,outstr);
-		ret=splitRecvPkg(outstr);
+		SendbyPost("POST","self-enrollment-certificate",argv[2],argv[3],buf_arr,buf_len,outstr);
+		ret=splitRecvPkg(outstr,&serverRespond);
 		//printf("recv [%d] arrs!",ret);
-		printrespond();
+		printrespond(&serverRespond);
 	}
 	else if((argc>1)&&(!strcmp("sm3file",argv[1])&&(NULL!=argv[2])))
 	{
@@ -156,6 +161,8 @@ int main(int argc, const char *argv[])
 		}
 		printf("]\n");
 		printf("hash length = [%d] bytes.\n", str_len);
+        str_len=sm3_string_hash_string(argv[2],buf_arr);
+        printf("hash buf_arr=[%s], length = [%d] bytes.\n", buf_arr,str_len);
 	}
 	else if((argc>2)&&(!strcmp("uncompressY",argv[1])&&(NULL!=argv[3])))
 	{
@@ -287,6 +294,47 @@ int main(int argc, const char *argv[])
 		printf("/*********************************************************/\n");
 
 	}
+    else if((argc>1)&&(!strcmp("showtime",argv[1])))
+    {
+        struct timeval tv;
+        struct timezone tz;
+        gettimeofday(&tv,&tz);
+
+        sprintf(buf_arr,"%02lX",tv.tv_sec);
+        printf("tv_sec=[%ld]\n",tv.tv_sec);
+        printf("CICV tv_sec=[%ld]\n",tv.tv_sec-1072886400);
+        printf("char tv_sec=[%s]\n",buf_arr);
+        memset(buf_arr,0,sizeof(buf_arr));
+        sprintf(buf_arr,"%02lX",tv.tv_sec-1072886400);
+        printf("CICV char tv_sec=[%s]\n",buf_arr);
+        printf("CICV char tv_sec by func=[%ld],[%08lX]\n",get_CICV_current_time(),get_CICV_current_time());
+        printf("test=[%02X]\n",123456789);
+
+        
+    }
+    else if((argc>1)&&(!strcmp("test",argv[1])))
+    {
+//        TbsCert_t *out_st=NULL;
+//        out_st=malloc(sizeof(TbsCert_t));
+//        str_len=EncodeSignPublicVerifyKey(sgdsm2,asnuncompressedP256,"CD4A8CF276F4C439A9B4245D5C3332A74909AF6411900A9584F6407FA1E1F04D","643EF9B90859BB8F26F1D5B605B65B898E6032E0863A75C95AAA0DD56C2B8D32",outstr);
+//        printf("SignPublicVerifyKey outstr=[%s],str_len=[%d]\n",outstr,str_len);
+//        memset(outstr,0,sizeof(outstr));
+//        str_len=EncodeSubjectInfo(0,"obu1234",outstr);
+//        printf("SubjectInfo outstr=[%s],str_len=[%d]\n",outstr,str_len);
+//        SetTbsCert_CICV("abcde12345",g_pubkx,g_pubky,543553242,out_st);
+//        str_len=Encode_TbsCert(out_st,outstr);
+//        printf("SetSubjectAttributes outstr=[%s],str_len=[%d]\n",outstr,str_len);
+
+//        free(out_st);
+        Auto_ECA("abcde12345600",
+                    g_LTCprikey,
+                    g_LTCpubkey,
+                    g_OBUpubkx,
+                    g_OBUpubky,
+                    g_LTC);
+        //INFO_PRINT("outstr=[%s]\n",outstr);
+
+    }
 	else
 	{
 		Useage();

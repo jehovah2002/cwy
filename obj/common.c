@@ -222,7 +222,7 @@ void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *in
 
 	memset(outstr,0,sizeof(char)*4096);
 	str_len=AscString2HexString((unsigned char *)input,str_len,outstr);
-	printf("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
+	DEBUG_PRINT("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
 
 }
 
@@ -248,7 +248,7 @@ void init_curve_param(int curve_type)
 		HexStringToAsc(_Gy,g_sm2_Gy);
 	}
 	else
-		printf("This curve is not currently supported !\n");
+		ERROR_PRINT("This curve is not currently supported !\n");
 }
 
 BIGNUM *k_creat(const EC_GROUP *ec_group,BN_CTX *ctx)
@@ -269,4 +269,13 @@ BIGNUM *k_creat(const EC_GROUP *ec_group,BN_CTX *ctx)
 
 }
 
+
+long get_CICV_current_time()
+{
+    struct timeval tv;
+    struct timezone tz;
+    
+    gettimeofday(&tv,&tz);
+    return (tv.tv_sec-CICVTime0);
+}
 

@@ -57,6 +57,8 @@ int sm3_digest_with_preprocess(const unsigned char *message,
 											const unsigned char *pub_key,
 											unsigned char *digest);
 
+                                              
+
 #ifdef  __cplusplus
   }
 #endif
