@@ -1,13 +1,5 @@
-/**************************************************
-* File name: sm2_create_key_pair.h
-* Author: HAN Wei
-* Author's blog: https://blog.csdn.net/henter/
-* Date: Nov 18th, 2018
-* Description: declare SM2 key pair creation function
-**************************************************/
-
-#ifndef HEADER_SM2_CREATE_KEY_PAIR_H
-#define HEADER_SM2_CREATE_KEY_PAIR_H
+#ifndef _SM2_CREATE_KEY_PAIR_H_
+#define _SM2_CREATE_KEY_PAIR_H_
 
 
 #ifdef  __cplusplus

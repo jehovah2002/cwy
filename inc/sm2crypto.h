@@ -1,3 +1,6 @@
+#ifndef _SM2_CRYPTO_H_
+#define _SM2_CRYPTO_H_
+
 #ifdef  __cplusplus
   extern "C" {
 #endif
@@ -41,4 +44,5 @@ unsigned long sm2Decrypt_Ex(unsigned char *prikey,
   }
 #endif
 
+#endif
 

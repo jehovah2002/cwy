@@ -177,6 +177,9 @@ typedef struct SubjectAttribute {
     else if(!strcmp("20",SubjectAttribute->Optional))
     {
         //verificationKey
+        str_len=Encode_SignPublicVerifyKey(&SubjectAttribute->verificationKey,out_buf);
+        sprintf(outstr,"%s%s%s",SubjectAttribute->Optional,out_buf,SubjectAttribute->assuranceLevel);
+        str_len=str_len+2+2;
         //encryptionKey
         ;
     }
@@ -203,6 +206,8 @@ typedef struct OCTET_STRING {
 
 */
     int str_len=0;
+    //ERROR_PRINT("subjectinfo->subjectName.bufsize=[%d]\n",subjectinfo->subjectName.bufsize);
+
     sprintf(outstr,"%02d%02X%s",subjectinfo->subjectType,subjectinfo->subjectName.bufsize/2,subjectinfo->subjectName.buf);
     str_len=strlen(subjectinfo->subjectName.buf)+2+2;
 
@@ -344,22 +349,82 @@ typedef struct {
     return str_len;
 }
 
-int Encode_MotCertCertificate(const MotCert_Certificate_t *MotCert,unsigned char *outstr)
+int Encode_certificateDigest(const MotCert_CertificateDigest_t *certificateDigest,unsigned char *outstr)
 {
 /*
-//Certificate
+//CertificateDigest 
+typedef struct MotCert_CertificateDigest {
+    int algorithm;//sm3 00
+    char digest[LUint64]; //16
+} MotCert_CertificateDigest_t;
+*/
+    int str_len=0;
+
+    //printf("certificateDigest->digest=[%s]\n",certificateDigest->digest);
+    sprintf(outstr,"%02d%s",certificateDigest->algorithm,certificateDigest->digest);
+    str_len=2+16;
+    
+    INFO_PRINT("outstr=[%s]\n",outstr);
+    return str_len;
+
+}
+
+int Encode_IssuerId(const IssuerId_t *issuerId,unsigned char *outstr)
+{
+
+/* 
+//IssuerId
+typedef struct IssuerId {
+    int IssuerIdChoice;
+    union IssuerId_u {
+        char *self;//NULL
+        MotCert_CertificateDigest_t  certificateDigest;
+    } IssuerId_u;
+} IssuerId_t;
+*/
+    int str_len=0;
+    char out_buf_issuerid[32]={0};
+
+    str_len = Encode_certificateDigest(&issuerId->IssuerId_u.certificateDigest,out_buf_issuerid);
+    sprintf(outstr,"%02d%s",issuerId->IssuerIdChoice,out_buf_issuerid);
+    str_len = str_len+2;
+
+    INFO_PRINT("outstr=[%s]\n",outstr);
+    return str_len;
+}
+
+int Encode_MotCertificate(const MotCert_Certificate_t *certificate,unsigned char *outstr)
+{
+/*
 typedef struct MotCert_Certificate {
-	int version;
-	IssuerId_t	 issuerId;
-	TbsCert_t	 tbs;
-	MotCert_Signature_t signature;
+    int version;
+    IssuerId_t   issuerId;
+    TbsCert_t    tbs;
+    MotCert_Signature_t signature;
 
 } MotCert_Certificate_t;
 */
-
     int str_len=0;
+    int str_len_issuerid=0;
+    int str_len_tbs=0;
+    int str_len_signature=0;
     
+
+    char out_buf_issuerid[32]={0};
+    char out_buf_tbs[256]={0};
+    char out_buf_signature[256]={0};
+
+    str_len_issuerid = Encode_IssuerId(&certificate->issuerId,out_buf_issuerid);
+    str_len_tbs = Encode_TbsCert(&certificate->tbs,out_buf_tbs);
+    str_len_signature = Encode_Signature(&certificate->signature,out_buf_signature);
+
+    //printf("=======certificate->version=[%d]=========\n",certificate->version);
     
+    sprintf(outstr,"%02d%s%s%s",certificate->version,out_buf_issuerid,out_buf_tbs,out_buf_signature);
+    str_len=2+str_len_issuerid+str_len_tbs+str_len_signature;
+
+    INFO_PRINT("outstr=[%s]\n",outstr);
+
     return str_len;
 
 }
@@ -387,6 +452,8 @@ typedef struct MotBaseTypes_Opaque{
 */
     int str_len=0;
     char out_buf[2048]={0};
+
+    DEBUG_PRINT("CertificateChoice=[%d]\n",certificate->CScmsCertificateChoice);
     
     if(CScmsCertificate_PR_x509==certificate->CScmsCertificateChoice)
     {
@@ -396,8 +463,14 @@ typedef struct MotBaseTypes_Opaque{
             certificate->CScmsCertificate_u.x509.x509_Opaque.buf);
         str_len=2+2+4+certificate->CScmsCertificate_u.x509.x509_Opaque.bufsize;
     }
+    else if(CScmsCertificate_PR_mot==certificate->CScmsCertificateChoice)
+    {
+        str_len=Encode_MotCertificate(&certificate->CScmsCertificate_u.mot,out_buf);
+        sprintf(outstr,"%02d%s",certificate->CScmsCertificateChoice,out_buf);
+        str_len=str_len+2;
+    }
 
-    INFO_PRINT("outstr=[%s]\n",outstr);
+    DEBUG_PRINT("outstr=[%s]\n",outstr);
     return str_len;
 
 }
@@ -504,7 +577,7 @@ typedef struct {
 		MotBaseTypes_Opaque_t	            unSecuredData;
 		EndEntityMaInterface_SignedData_t	signedData;
 		MotSecureData_EncryptedData_t	    encData;
-        SignedCertificateRequest_t          SignedCertificateRequest;
+		SignedCertReqOpaque_t               SignedCertReqOpaque
 	}EndEntityMaInterface_Payload_u;
 }SecuredMessage_t;
 */
@@ -514,9 +587,10 @@ typedef struct {
 
     if(EndEntityMaInterface_Payload_PR_SecuredMessage==SecuredMessage->SecMPlayloadChoice)
     {
-        str_len=Encode_SignedCertificateRequest(&SecuredMessage->EndEntityMaInterface_Payload_u.SignedCertificateRequest,out_buf);
+        str_len=Encode_SignedCertificateRequest(&SecuredMessage->EndEntityMaInterface_Payload_u.SignedCertReqOpaque.SignedCertificateRequest,out_buf);
         INFO_PRINT("SecuredMessage str_len=[%d]\n",str_len);
-        sprintf(outstr,"%02d%02d%02d%04X%s",SecuredMessage->SecMversion,SecuredMessage->SecMPlayloadChoice,SecuredMessage->LengthChoice,str_len/2,out_buf);
+        //SecuredMessage->EndEntityMaInterface_Payload_u.SignedCertReqOpaque.Length=str_len;
+        sprintf(outstr,"%02d%02d%02d%04X%s",SecuredMessage->SecMversion,SecuredMessage->SecMPlayloadChoice,SecuredMessage->EndEntityMaInterface_Payload_u.SignedCertReqOpaque.LengthChoice,str_len/2,out_buf);
         str_len=str_len+2+2+4;
     }
     INFO_PRINT("outstr=[%s]\n",outstr);

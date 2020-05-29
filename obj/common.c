@@ -218,21 +218,24 @@ int getnum(char *instr)
 
 void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *input_name)
 {
-	unsigned char outstr[4096]={0};
-
-	memset(outstr,0,sizeof(char)*4096);
-	str_len=AscString2HexString((unsigned char *)input,str_len,outstr);
-	DEBUG_PRINT("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
-
+    if(DEBUG_LEVEL<=DEBUG_OUTPUT)
+    {
+    	unsigned char outstr[4096*10]={0};
+    	str_len=AscString2HexString((unsigned char *)input,str_len,outstr);
+    	DEBUG_PRINT("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
+    }
 }
 
 void print_bn(char *pchT, BIGNUM* pBG_p)
 {
-	unsigned char aucY[2048+1] = {0};
-	int iYLen = 0;
-	
-	iYLen = BN_bn2bin ( pBG_p, aucY);
-	print_HexString(aucY, iYLen,pchT);
+    if(DEBUG_LEVEL<=DEBUG_OUTPUT)
+    {
+    	unsigned char aucY[4096*10] = {0};
+    	int iYLen = 0;
+    	
+    	iYLen = BN_bn2bin ( pBG_p, aucY);
+    	print_HexString(aucY, iYLen,pchT);
+    }
 }
 
 
@@ -278,4 +281,24 @@ long get_CICV_current_time()
     gettimeofday(&tv,&tz);
     return (tv.tv_sec-CICVTime0);
 }
+
+int HexToDec(char *src){
+    //将src中的无符号十六进制字符串转为十进制数
+    //如src="001A"，则返回26
+    //字符串src需要以'\0'作为结束标志
+    int value=0,srclen=strlen(src);
+    int i;
+    for(i=0;i<srclen;i++){
+        if(src[i]<='9'&&src[i]>='0'){
+            value=value*16+(int)(src[i]-'0');
+        }
+        else if(src[i]<='f'&&src[i]>='a'){
+            value=value*16+(int)(src[i]-'a'+10);
+        }else{
+            value=value*16+(int)(src[i]-'A'+10);
+        }
+    }
+    return value;//返回转换后的数值
+}
+
 

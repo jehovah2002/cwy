@@ -1,14 +1,5 @@
-/**************************************************
-* File name: sm2_sign_and_verify.h
-* Author: HAN Wei
-* Author's blog: https://blog.csdn.net/henter/
-* Date: Nov 19th, 2018
-* Description: declare SM2 sign data and verify
-    signature functions
-**************************************************/
-
-#ifndef HEADER_SM2_SIGN_AND_VERIFY_COMPUTATION_H
-  #define HEADER_SM2_SIGN_AND_VERIFY_COMPUTATION_H
+#ifndef _SM2_SIGN_AND_VERIFY_COMPUTATION_H_
+#define _SM2_SIGN_AND_VERIFY_COMPUTATION_H_
 
 
 #ifdef  __cplusplus

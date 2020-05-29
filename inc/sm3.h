@@ -1,5 +1,5 @@
-#ifndef HEADER_SM3_H
-#define HEADER_SM3_H
+#ifndef _SM3_H_
+#define _SM3_H_
 
 #ifdef  __cplusplus
   extern "C" {

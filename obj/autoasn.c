@@ -39,6 +39,7 @@ int SetPublicVerifyKey(const int curve,const int ECCPoint,const char *pubkx,cons
     return ret;
 }
 
+
 int SetSubjectAttributes_PublicVerifyKey_Only(const char *OPTIONAL,int curve,int ECCPoint,const char *pubkx,const char *pubky,SubjectAttribute_t *outstr)
 {
     int ret = 0;
@@ -91,17 +92,18 @@ int SetValidityRestriction_ValidityPeriod_Only(const char *OPTIONAL,const int Ch
 
 }
 
-int SetTbsCert_CICV(const char *subjectName,const char *pubkx,const char *pubky,const long time_end,TbsCert_t *outstr)
+int SetTbsCert_CICV(const int subjecttype,const char *subattrOptional,const char *subjectName,const char *pubkx,const char *pubky,long time_end,TbsCert_t *outstr)
 {
     int ret = 0;
     
     SetSubjectInfo(SubjectType_enrollmentCredential,subjectName,&outstr->subjectInfo);
-    SetSubjectAttributes_PublicVerifyKey_Only("00",sgdsm2,asnuncompressedP256,pubkx,pubky,&outstr->subjectAttributes);
+    SetSubjectAttributes_PublicVerifyKey_Only(subattrOptional,sgdsm2,asnuncompressedP256,pubkx,pubky,&outstr->subjectAttributes);
     SetValidityRestriction_ValidityPeriod_Only("00",PR_timeEnd,0,time_end,&outstr->validityRestrictions);
 
     return ret;
 
 }
+
 
 
 int SetEeEcaCertRequest_CICV_MOT(const char *subjectName,const char *pubkx,const char *pubky,const long time_end,EeEcaCertRequest_t *outstr)
@@ -112,7 +114,7 @@ int SetEeEcaCertRequest_CICV_MOT(const char *subjectName,const char *pubkx,const
     outstr->version=1;
     outstr->currentTime=get_CICV_current_time();
     outstr->tbsData.Choice=CScmsCertificateTbs_PR_mot;
-    SetTbsCert_CICV(subjectName,pubkx,pubky,time_end,&outstr->tbsData.CScmsCertificateTbs_u.mot);
+    SetTbsCert_CICV(SubjectType_enrollmentCredential,"00",subjectName,pubkx,pubky,time_end,&outstr->tbsData.CScmsCertificateTbs_u.mot);
 
 
     return ret;
@@ -260,8 +262,8 @@ int CreatCicvECSecuredMessage(const char *SubjectName,
 
     SecuredMessage.SecMversion=2;
     SecuredMessage.SecMPlayloadChoice=CScmsSecureData_Payload_PR_signedCertificateRequest;
-    SecuredMessage.LengthChoice=82;
-    SetSignedCertificateRequest(SubjectName,EndTime,LTC_prikey,LTC_pubkey,OBU_pubkeyx,OBU_pubkeyy,LTC_CertStr,&SecuredMessage.EndEntityMaInterface_Payload_u.SignedCertificateRequest);
+    SecuredMessage.EndEntityMaInterface_Payload_u.SignedCertReqOpaque.LengthChoice=82;
+    SetSignedCertificateRequest(SubjectName,EndTime,LTC_prikey,LTC_pubkey,OBU_pubkeyx,OBU_pubkeyy,LTC_CertStr,&SecuredMessage.EndEntityMaInterface_Payload_u.SignedCertReqOpaque.SignedCertificateRequest);
     //str_len=Encode_SignedCertificateRequest(&SecuredMessage.EndEntityMaInterface_Payload_u.SignedCertificateRequest,outbuf);
     INFO_PRINT("str_len for SignedCertificateRequest= [%d]\n",str_len);
     ret=Encode_SecuredMessage(&SecuredMessage,outstr);

@@ -1,3 +1,7 @@
+#ifndef _AUTOASN_H_
+#define _AUTOASN_H_
+
+
 #ifdef  __cplusplus
   extern "C" {
 #endif
@@ -75,6 +79,15 @@ typedef enum SubjectType {
 	SubjectType_icaAuthority	= 8,
 	SubjectType_asAuthority	= 9
 } e_SubjectType;
+
+typedef enum IssuerId_PR {
+	IssuerId_PR_NOTHING,	/* No components present */
+	IssuerId_PR_self = 80,
+	IssuerId_PR_certificateDigest
+	/* Extensions may appear below */
+	
+} IssuerId_PR;
+
 
 typedef enum CScmsSecureData_Payload_PR {
 	CScmsSecureData_Payload_PR_NOTHING,	/* No components present */
@@ -295,7 +308,7 @@ typedef struct MotCert_PolygonalRegion {
 
 /* GeographicRegion */
 typedef struct MotBaseTypes_GeographicRegion {
-	char Choice[LCHOICE];
+	int Choice;
 	union MotBaseTypes_GeographicRegion_u {
 		MotCert_CircularRegion_t	 circularRegion;
 		MotCert_SequenceOfRectangularRegion_t	 rectangularRegion;
@@ -312,7 +325,7 @@ typedef struct MotBaseTypes_GeographicRegion {
 typedef struct ValidityRestriction {
     char Optional[LUint8];
 	MotCert_ValidityPeriod_t validityPeriod;
-	MotBaseTypes_GeographicRegion_t *region	/* OPTIONAL */;
+	MotBaseTypes_GeographicRegion_t region	/* OPTIONAL */;
 } ValidityRestriction_t;
 
 
@@ -321,16 +334,16 @@ typedef struct SequenceOfitsAidList {
 	char ItsAid[LUint64];
 } SequenceOfitsAidList_t;
 
-typedef OCTET_LONG_STRING_t	 MotCert_SubjectAssurance_t;
+typedef OCTET_STRING_t	 MotCert_SubjectAssurance_t;
 
 
 typedef struct SubjectAttribute {
     char Optional[LUint8];
 	PublicVerifyKey_t verificationKey;
-	PublicEncryptionKey_t *encryptionKey	/* OPTIONAL */;
-	MotCert_SubjectAssurance_t *assuranceLevel/* OPTIONAL */;
-	SequenceOfitsAidList_t	*itsAidList;	/* OPTIONAL */;
-	SequenceOfitsAidSspList_t *itsAidSspList	/* OPTIONAL */;
+	PublicEncryptionKey_t encryptionKey	/* OPTIONAL */;
+	char assuranceLevel[2+1];/* OPTIONAL */;
+	SequenceOfitsAidList_t	itsAidList;	/* OPTIONAL */;
+	SequenceOfitsAidSspList_t itsAidSspList	/* OPTIONAL */;
 } SubjectAttribute_t;
 
 
@@ -393,7 +406,7 @@ typedef struct MotCert_CertificateDigest {
 
 /* IssuerId */
 typedef struct IssuerId {
-	char IssuerIdChoice[LCHOICE];
+	int IssuerIdChoice;
 	union IssuerId_u {
 		char *self;//NULL
 		MotCert_CertificateDigest_t	 certificateDigest;
@@ -401,13 +414,13 @@ typedef struct IssuerId {
 		 * This type is extensible,
 		 * possible extensions are below.
 		 */
-	} choice;
+	} IssuerId_u;
 } IssuerId_t;
 
 
 /* Certificate */
 typedef struct MotCert_Certificate {
-	char version[LUint8];
+	int version;
 	IssuerId_t	 issuerId;
 	TbsCert_t	 tbs;
 	MotCert_Signature_t signature;
@@ -496,7 +509,7 @@ typedef struct ReportType {
 
 /* MisbehaviorReportContents */
 typedef struct MisbehaviorReportContents {
-    char ExAttr[LENUME];//={"00"};  for OPTIONAL ...
+    int ExAttr;//={"00"};  for OPTIONAL ...
 	char version[LVERSION];
 	char generationTime[LUint32];
 	OCTET_STRING_t policyFilename;
@@ -649,15 +662,18 @@ typedef struct {
 	MotCert_Signature_t Signature;
 }SignedCertificateRequest_t;
 
+/* TBSData */
+typedef struct MotSecureData_TBSData {
+	char TbsDataOptional[4];
+	OCTET_LONG_STRING_t	data;
+	char extHash[64]/* OPTIONAL */;
+} MotSecureData_TBSData_t;
+
 
 typedef struct EndEntityMaInterface_SignedData {
-	//EndEntityMaInterface_SignerInfo_t	 signer;
-	//MotSecureData_TBSData_t	 tbs;
-	//MotCert_Signature_t	 sign;
-	
-	/* Context for parsing across buffer boundaries */
-    //...
-	asn_struct_ctx_t _asn_ctx;
+	CScmsSecureData_SignerInfo_t	 signer;
+	MotSecureData_TBSData_t	 tbs;
+	MotCert_Signature_t	 sign;
 } EndEntityMaInterface_SignedData_t;//to do
 
 typedef struct MotSecureData_EncryptedData {
@@ -669,19 +685,21 @@ typedef struct MotSecureData_EncryptedData {
 	asn_struct_ctx_t _asn_ctx;
 } MotSecureData_EncryptedData_t;//to do
 
-
+typedef struct SignedCertReqOpaque{
+    int LengthChoice;//82
+	int Length;
+    SignedCertificateRequest_t          SignedCertificateRequest;
+}SignedCertReqOpaque_t;
 
 
 typedef struct {
 	int SecMversion;
 	int SecMPlayloadChoice;
-	int LengthChoice;//82
-	int Length;
     union EndEntityMaInterface_Payload_u {
 		MotBaseTypes_Opaque_t	            unSecuredData;
 		EndEntityMaInterface_SignedData_t	signedData;
 		MotSecureData_EncryptedData_t	    encData;
-        SignedCertificateRequest_t          SignedCertificateRequest;
+        SignedCertReqOpaque_t               SignedCertReqOpaque;
 	}EndEntityMaInterface_Payload_u;
 }SecuredMessage_t;
 
@@ -702,7 +720,9 @@ int Encode_CScmsCertificateTbs(const CScmsCertificateTbs_t *CertificateTbs,unsig
 int Encode_EeEcaCertRequest(const EeEcaCertRequest_t *EcaEECertReq,unsigned char *outstr);//20-196
 int Encode_EcaEndEntityInterfacePDU(const EcaEndEntityInterfacePDU_t *EcaEEPDU,unsigned char *outstr);//24-200
 int Encode_CScmsPDU(const CScmsPDU_t *CScmsPDU,unsigned char *outstr);//28-204
-int Encode_MotCertCertificate(const MotCert_Certificate_t *MotCert,unsigned char *outstr);
+//int Encode_MotCertCertificate(const MotCert_Certificate_t *MotCert,unsigned char *outstr);
+int Encode_MotCertificate(const MotCert_Certificate_t *certificate,unsigned char *outstr);
+
 int Encode_CScmsCertificate(const CScmsCertificate_t *certificate,unsigned char *outstr);//8-2048
 int Encode_SignerInfo(const CScmsSecureData_SignerInfo_t *SignerInfo,unsigned char *outstr);//10-2048
 int Encode_Signature(const MotCert_Signature_t *Signature,unsigned char *outstr);//68-196
@@ -714,13 +734,13 @@ int SetEeEcaCertRequest_CICV_MOT(const char *subjectName,const char *pubkx,const
 
 int SetSubjectInfo(int subjectType,const char *subjectName,SubjectInfo_t *outstr);
 int SetPublicVerifyKey(const int curve,const int ECCPoint,const char *pubkx,const char *pubky,PublicVerifyKey_t *outstr);
+
 int SetSubjectAttributes_PublicVerifyKey_Only(const char *OPTIONAL,int curve,int ECCPoint,const char *pubkx,const char *pubky,SubjectAttribute_t *outstr);
 int SetValidityPeriod(const int Choice,const long time_start,const long time_end,MotCert_ValidityPeriod_t *outstr);
 
 int SetValidityRestriction_ValidityPeriod_Only(const char *OPTIONAL,const int Choice,const long time_start,const long time_end,ValidityRestriction_t *outstr);
 
-int SetTbsCert_CICV(const char *subjectName,const char *pubkx,const char *pubky,const long time_end,TbsCert_t *outstr);
-
+int SetTbsCert_CICV(const int subjecttype,const char *subattrOptional,const char *subjectName,const char *pubkx,const char *pubky,const long time_end,TbsCert_t *outstr);
 
 int SetCScmsPDU_CICV_ECA(const char *subjectName,const char *pubkx,const char *pubky,const long time_end,CScmsPDU_t *outstr);
 
@@ -752,7 +772,18 @@ int CreatCicvECSecuredMessage(const char *SubjectName,
 
 
 
+
+
+int Decode_SecuredMessage(const char *instr,SecuredMessage_t *outstruct,char *outstr);
+int Decode_CertificateDigest(const char *instr,MotCert_CertificateDigest_t *outstruct,char *outstr);
+
+extern CScmsPDU_t ScopedEeEnrollmentCertResponse;
+
+
+
 #ifdef  __cplusplus
   }
+#endif
+
 #endif
 

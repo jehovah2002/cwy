@@ -8,6 +8,8 @@
 #include "autoasn.h"
 #include "network.h"
 
+char *rspstr="02818183028100AB9C7DF39472045F0911433D434E2C434E3D436963764D6F744153200000836573330276088000C45E7595CCA8B41F6C14D9E22E708C998770CCFD683033FD0000811D2579832E143D830080EB760D172C12F9B31287C337E298E3EC750CB21319D6A39EAEF9F04F4A2A8204E0E1B2738E4D318B6B8DD23B6DC5BC7BBCB113080719A1995FAAB80D8A054F9C008201410180810001E14A73F59D6CB62783028100AB9C7DF39472045F0312433D434E2C434E3D436963764D6F7445434120000083B5D69B452B68A6D4BAB6A7F1F20A39D760D37A101ED933FA1FE22C556612C8110000811D2579832E143D8300808C1B64D67E6C57E9EF1CE833280C1ACF130CE6B60AE587ED4CD4786ECE8FCA55E3CBCEB8E904AE8B82AB316442E13EB99FD08FA175403FE01D5131AD503EE3BB83028100113326CFB964232300096F627532303031343000000084697D6910521C4B22A4BCF3CE35232F4293258D1EC2A07159C49EF7DBD244BF82BA85F712B1B962FDAE58BD01731B7C18DAB271FD50CE0F7C8A842D1995EA42DC008020661DEA0080C42C2E3558D490E0183AA24500B978D97EEE112FA1B48F92087C83DE4F3FCEEF064A48260EAEB5E288C351C18F3B6A53D6A22F3D23294462F677DA7CFCB8B33000808DFE2FC6AE4B6802DD769234333F39432CEB65B636F37F446EE923BCEB3161DA8823F247F301A08131294CACB64841BE22EC73949FF2DEF5A5A97BE7EE12AE1B";
+
 void Useage()
 {
 	printf("**************************************************\n");
@@ -54,6 +56,8 @@ void Useage()
 	printf("***  cmd:[decrypt] <prikey> <msg>              ***\n");
 	printf("***       return:decode_msg & datalen          ***\n");
     printf("***  cmd:[showtime]                            ***\n");
+    printf("***  cmd:[ECA] <name>                          ***\n");
+    printf("***  cmd:[test]                                ***\n");
 	printf("**************************************************\n");
 
 }
@@ -246,6 +250,7 @@ int main(int argc, const char *argv[])
 			printf("Verify SM2 signature failed! [%d]\n",error_code);
 			return error_code;
 		}
+        printf("Verify SM2 signature success!\n");
 		printf("/*********************************************************/\n");
 
 	}
@@ -312,7 +317,7 @@ int main(int argc, const char *argv[])
 
         
     }
-    else if((argc>1)&&(!strcmp("test",argv[1])))
+    else if((argc>1)&&(!strcmp("ECA",argv[1])))
     {
 //        TbsCert_t *out_st=NULL;
 //        out_st=malloc(sizeof(TbsCert_t));
@@ -326,7 +331,7 @@ int main(int argc, const char *argv[])
 //        printf("SetSubjectAttributes outstr=[%s],str_len=[%d]\n",outstr,str_len);
 
 //        free(out_st);
-        Auto_ECA("abcde12345600",
+        Auto_ECA(argv[2],
                     g_LTCprikey,
                     g_LTCpubkey,
                     g_OBUpubkx,
@@ -334,6 +339,15 @@ int main(int argc, const char *argv[])
                     g_LTC);
         //INFO_PRINT("outstr=[%s]\n",outstr);
 
+    }
+    else if((argc>1)&&(!strcmp("test",argv[1])))
+    {
+        SecuredMessage_t outstruct;
+        Decode_SecuredMessage(rspstr,&outstruct,buf_out);
+        //char bufsize[4]={0};
+
+        //snprintf(bufsize,2+1,"%s",argv[2]);
+        //printf("bufsize=[%d]\n",HexToDec(bufsize));
     }
 	else
 	{

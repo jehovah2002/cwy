@@ -98,11 +98,9 @@ int sm3_digest_z(const unsigned char *id,
 	memcpy(y_coordinate, (pub_key + 1 + sizeof(x_coordinate)), sizeof(y_coordinate));
 	
 	md = EVP_sm3();
-        if ( !(md_ctx = EVP_MD_CTX_new()) )
+    if ( !(md_ctx = EVP_MD_CTX_new()) )
 	{
-#ifdef _DEBUG
-       printf("Allocate a digest context failed at %s, line %d!\n", __FILE__, __LINE__);
-#endif
+       ERROR_PRINT("Allocate a digest context failed !\n");
 	   return COMPUTE_SM3_DIGEST_FAIL;
 	}
     EVP_DigestInit_ex(md_ctx, md, NULL);
@@ -126,38 +124,38 @@ int sm3_digest_z(const unsigned char *id,
 
 /*********************************************************/
 int sm3_digest_with_preprocess(const unsigned char *message,
-												const int message_len,
-												const unsigned char *id,
-												const int id_len,
-												const unsigned char *pub_key,
-												unsigned char *digest)
-{
-	int error_code;
-	unsigned char z_digest[32];
-	EVP_MD_CTX *md_ctx;
-	const EVP_MD *md;
-	
-	if ( error_code = sm3_digest_z(id,
-									id_len,
-									pub_key,
-									z_digest) )
-	{
-       ERROR_PRINT("Compute SM3 digest of leading data Z failed at %s, line %d!\n", __FILE__, __LINE__);
-	   return COMPUTE_SM3_DIGEST_FAIL;	
-	}
+                                            const int message_len,
+                                            const unsigned char *id,
+                                            const int id_len,
+                                            const unsigned char *pub_key,
+                                            unsigned char *digest)
+    {
+    int error_code;
+    unsigned char z_digest[32];
+    EVP_MD_CTX *md_ctx;
+    const EVP_MD *md;
 
-	md = EVP_sm3();
-        if ( !(md_ctx = EVP_MD_CTX_new()) )
-	{
-       ERROR_PRINT("Allocate a digest context failed at %s, line %d!\n", __FILE__, __LINE__);
-	   return COMPUTE_SM3_DIGEST_FAIL;
-	}
-        EVP_DigestInit_ex(md_ctx, md, NULL);
-        EVP_DigestUpdate(md_ctx, z_digest, sizeof(z_digest));
-		EVP_DigestUpdate(md_ctx, message, message_len);
-        EVP_DigestFinal_ex(md_ctx, digest, NULL);
-        EVP_MD_CTX_free(md_ctx);
-	return 0;
+    if ( error_code = sm3_digest_z(id,
+                                    id_len,
+                                    pub_key,
+                                    z_digest) )
+    {
+        ERROR_PRINT("Compute SM3 digest of leading data Z failed at %s, line %d!\n", __FILE__, __LINE__);
+        return COMPUTE_SM3_DIGEST_FAIL;	
+    }
+
+    md = EVP_sm3();
+    if ( !(md_ctx = EVP_MD_CTX_new()) )
+    {
+        ERROR_PRINT("Allocate a digest context failed at %s, line %d!\n", __FILE__, __LINE__);
+        return COMPUTE_SM3_DIGEST_FAIL;
+    }
+    EVP_DigestInit_ex(md_ctx, md, NULL);
+    EVP_DigestUpdate(md_ctx, z_digest, sizeof(z_digest));
+    EVP_DigestUpdate(md_ctx, message, message_len);
+    EVP_DigestFinal_ex(md_ctx, digest, NULL);
+    EVP_MD_CTX_free(md_ctx);
+    return 0;
 }
 
 

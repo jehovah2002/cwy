@@ -1,3 +1,6 @@
+#ifndef _NETWORK_H_
+#define _NETWORK_H_
+
 #ifdef  __cplusplus
   extern "C" {
 #endif
@@ -48,7 +51,7 @@ void printrespond(CicvserverRespond_t *serverRespond);
 #endif
 
 
-
+#endif
 
 
 
