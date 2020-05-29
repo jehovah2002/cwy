@@ -5,7 +5,7 @@
   extern "C" {
 #endif
 
-typedef struct CicvserverRespond{
+typedef struct CicvserverRespond_t{
 	char res[16];
 	char type[128];
 	char errnum[8];
@@ -15,7 +15,7 @@ typedef struct CicvserverRespond{
 	char str[4096];
 }CicvserverRespond_t;
 
-typedef struct CicvserverRequest{
+typedef struct CicvserverRequest_t{
 	char method[8];
 	char path[64];
 	char ip[32];

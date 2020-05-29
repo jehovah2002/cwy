@@ -60,7 +60,7 @@ $(MYTEST)::	$(MYTEST_OBJ)
 
 
 clean::
-	@$(RM) $(LIBAPI_OBJ) $(LIBAPI_SO) $(MYTEST) $(MYTEST_OBJ)
+	@$(RM) $(LIBAPI_OBJ) $(LIBAPI_SO) $(MYTEST) $(MYTEST_OBJ) eca.* ec.* ec_name ec_pubx ec_puby
 
 cleanbin::
 	@$(RM) $(PROGRAM)

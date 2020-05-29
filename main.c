@@ -317,7 +317,7 @@ int main(int argc, const char *argv[])
 
         
     }
-    else if((argc>1)&&(!strcmp("ECA",argv[1])))
+    else if((argc>2)&&(!strcmp("ECA",argv[1])))
     {
 //        TbsCert_t *out_st=NULL;
 //        out_st=malloc(sizeof(TbsCert_t));

@@ -1,8 +1,5 @@
 #include "autoc.h"
-#include "common.h"
-#include "autoasn.h"
-#include "network.h"
-#include "sm2_sign_and_verify.h"
+
 
 
 CScmsPDU_t ScopedEeEnrollmentCertResponse;
@@ -10,18 +7,12 @@ CScmsPDU_t ScopedEeEnrollmentCertResponse;
 char *ICA="028100D961EE6A61F09AC50812433D434E2C434E3D436963764D6F744943412000008391771D107BDEAA9D249747F3146B7EFBB1D5A4D256B8A32E010715FC6C125D700000811D2579832E143D830080BDDB05D2B23908E5D0EFC4D6FA679FFE9C401FCD7DE49970C8492FAEBA8897022356BE27A69D28D9A1092D56328A8E761858ED74095C973601CD7F5719F43A4F";
 
 
-
-int Auto_ECA(const char *Subjectname,const char *LTCprikey,const char *LTCpubkey,const char *OBUpubkx,const char *OBUpubky,const char *LTCStr)
+int ECA_EC_Verify(CicvserverRespond_t *serverRespond)
 {
-    char ECAStr[4096]={0};
-    char asn_arr[4096]={0};
     char outstr[4096]={0};
-    int str_len=0;
-    int ret=0;
-    int error_code;
-    
-    CicvserverRespond_t serverRespond;
     SecuredMessage_t outstruct;
+    int str_len=0;
+    int error_code;
     char *eca_r=NULL;
     char *eca_s=NULL;
     char *ec_r=NULL;
@@ -33,28 +24,11 @@ int Auto_ECA(const char *Subjectname,const char *LTCprikey,const char *LTCpubkey
     char ecatbsout[1024]={0};
     char ecout[1024]={0};
     char ectbsout[1024]={0};
-    int ecpubkey_type=0;
-    char *ecpubkeyx=NULL;
-
-    CreatCicvECSecuredMessage(Subjectname,
-                            CICVENDTIME,
-                            LTCprikey,
-                            LTCpubkey,
-                            OBUpubkx,
-                            OBUpubky,
-                            LTCStr,
-                            ECAStr);
-    printf("ECAStr=[%s]\n",ECAStr);
-
-    str_len=HexStringToAsc(ECAStr,asn_arr);
-    INFO_PRINT("str_len of asn_arr=[%d]\n",str_len);
-    SendbyPost("POST","self-enrollment-certificate",CICVHOST,CICVPORT,asn_arr,str_len,outstr);
-    ret=splitRecvPkg(outstr,&serverRespond);
-    //printf("recv [%d] arrs!",ret);
-    printrespond(&serverRespond);
+    int ecapubkey_type=0;
+    char *ecapubkeyx=NULL;
 
     memset(outstr,0,sizeof(outstr));
-    Decode_SecuredMessage(serverRespond.str,&outstruct,outstr);
+    Decode_SecuredMessage(serverRespond->str,&outstruct,outstr);
 
     Encode_MotCertificate(&ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.ecaCert.CScmsCertificate_u.mot,ecaout);
     DEBUG_PRINT("eca=[%s]\n",ecaout);
@@ -90,6 +64,10 @@ int Auto_ECA(const char *Subjectname,const char *LTCprikey,const char *LTCpubkey
 	}
     else
         printf("Verify ECA signature Success! \n");
+    AscStringSaveToBin("./eca.hex",ecaout,strlen(ecaout));
+    str_len=HexStringToAsc(ecaout,outstr);
+	AscStringSaveToBin("./eca.oer",outstr,str_len);
+    printf("Save ECA Cert to eca.hex and eca.oer ! \n");
                                     
     Encode_MotCertificate(&ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.enrollmentCert.CScmsCertificate_u.mot,ecout);
     DEBUG_PRINT("ec=[%s]\n",ecout);
@@ -113,13 +91,13 @@ int Auto_ECA(const char *Subjectname,const char *LTCprikey,const char *LTCpubkey
     sprintf(message,"%s%s",tbshash,certhash);
     DEBUG_PRINT("message=[%s] .\n",message);
 
-    ecpubkey_type=ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.ecaCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.Choice-asnxonly;
-    ecpubkeyx=ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.ecaCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.MotBaseTypes_ECCPoint_u.sm2_compressed_y_1;
-    DEBUG_PRINT("type=[%d],key=[%s],keyy_1=[%s]\n",ecpubkey_type,ecpubkeyx,ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.ecaCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.MotBaseTypes_ECCPoint_u.sm2_compressed_y_1);
+    ecapubkey_type=ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.ecaCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.Choice-asnxonly;
+    ecapubkeyx=ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.ecaCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.MotBaseTypes_ECCPoint_u.sm2_compressed_y_1;
+    DEBUG_PRINT("type=[%d],key=[%s],keyy_1=[%s]\n",ecapubkey_type,ecapubkeyx,ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.ecaCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.MotBaseTypes_ECCPoint_u.sm2_compressed_y_1);
     if ( error_code = sm2_verify(message,
-									ecpubkey_type,
+									ecapubkey_type,
 									g_IDA,
-									ecpubkeyx,
+									ecapubkeyx,
 									ec_r,
 									ec_s))
 	{
@@ -128,6 +106,51 @@ int Auto_ECA(const char *Subjectname,const char *LTCprikey,const char *LTCpubkey
 	}
     else
         printf("Verify EC signature Success!\n");
+    memset(outstr,0,sizeof(outstr));
+    AscStringSaveToBin("./ec.hex",ecout,strlen(ecout));
+    str_len=HexStringToAsc(ecout,outstr);
+	AscStringSaveToBin("./ec.oer",outstr,str_len);
+    printf("Save ECA Cert to ec.hex and ec.oer ! \n");
+    //save ec pubkey
+    AscStringSaveToBin("./ec_name",
+    ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.enrollmentCert.CScmsCertificate_u.mot.tbs.subjectInfo.subjectName.buf,
+    ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.enrollmentCert.CScmsCertificate_u.mot.tbs.subjectInfo.subjectName.bufsize);
+    AscStringSaveToBin("./ec_pubx",ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.enrollmentCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.MotBaseTypes_ECCPoint_u.sm2_uncompressedP256.x,64);
+    AscStringSaveToBin("./ec_puby",ScopedEeEnrollmentCertResponse.CScmsPDUContent_u.eca_ee.EcaEndEntityInterfacePDU_u.ecaEeCertResponse.enrollmentCert.CScmsCertificate_u.mot.tbs.subjectAttributes.verificationKey.key.MotBaseTypes_ECCPoint_u.sm2_uncompressedP256.y,64);
+
+}
+
+int Auto_ECA(const char *Subjectname,const char *LTCprikey,const char *LTCpubkey,const char *OBUpubkx,const char *OBUpubky,const char *LTCStr)
+{
+    char ECAStr[4096]={0};
+    char asn_arr[4096]={0};
+    char outstr[4096]={0};
+    
+    int ret=0;
+    int str_len=0;
+    
+    CicvserverRespond_t serverRespond;
+    CreatCicvECSecuredMessage(Subjectname,
+                            CICVENDTIME,
+                            LTCprikey,
+                            LTCpubkey,
+                            OBUpubkx,
+                            OBUpubky,
+                            LTCStr,
+                            ECAStr);
+    printf("ECAStr=[%s]\n",ECAStr);
+
+    str_len=HexStringToAsc(ECAStr,asn_arr);
+    INFO_PRINT("str_len of asn_arr=[%d]\n",str_len);
+    SendbyPost("POST","self-enrollment-certificate",CICVHOST,CICVPORT,asn_arr,str_len,outstr);
+    ret=splitRecvPkg(outstr,&serverRespond);
+    //printf("recv [%d] arrs!",ret);
+    printrespond(&serverRespond);
+
+    if(0!=atoi(serverRespond.length))
+        ECA_EC_Verify(&serverRespond);
+    else
+        ret=-1;
     return ret;
 }
 
