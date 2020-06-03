@@ -115,8 +115,8 @@ int sm3_digest_z(const unsigned char *id,
 	EVP_DigestUpdate(md_ctx, y_coordinate, sizeof(y_coordinate));
 
     EVP_DigestFinal_ex(md_ctx, z_digest, NULL);
-	print_HexString(x_coordinate,32,"x_coordinate");
-	print_HexString(y_coordinate,32,"y_coordinate");
+	print_HexString(x_coordinate,32,"x_coordinate",DEBUG_OUTPUT);
+	print_HexString(y_coordinate,32,"y_coordinate",DEBUG_OUTPUT);
 	//print_HexString(z_digest,32,"z_digest");
     EVP_MD_CTX_free(md_ctx);
 	return 0;

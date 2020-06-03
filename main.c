@@ -196,12 +196,12 @@ int main(int argc, const char *argv[])
 		}
 		printf("Create SM2 key pair succeeded!\n");
 		printf("Private key:\n");
-		print_HexString(key_pair.pri_key,sizeof(key_pair.pri_key),"pri_key");
+		print_HexString(key_pair.pri_key,sizeof(key_pair.pri_key),"pri_key",ERROR_OUTPUT);
 		printf("\n\n");
 		printf("Public key:\n");
-		print_HexString(key_pair.pub_key,sizeof(key_pair.pub_key),"pub_key");
-		print_HexString(key_pair.pub_key+1,sizeof(key_pair.pri_key),"pub_key.x");
-		print_HexString(key_pair.pub_key+33,sizeof(key_pair.pri_key),"pub_key.y");
+		print_HexString(key_pair.pub_key,sizeof(key_pair.pub_key),"pub_key",ERROR_OUTPUT);
+		print_HexString(key_pair.pub_key+1,sizeof(key_pair.pri_key),"pub_key.x",ERROR_OUTPUT);
+		print_HexString(key_pair.pub_key+33,sizeof(key_pair.pri_key),"pub_key.y",ERROR_OUTPUT);
 		printf("\n\n");
 
 	}
@@ -225,9 +225,9 @@ int main(int argc, const char *argv[])
 		printf("Create SM2 signature succeeded!\n");
 		printf("SM2 signature:\n");
 		printf("r coordinate:\n");
-		print_HexString(sm2_sig_out.r_coordinate,sizeof(sm2_sig_out.r_coordinate),"r");
+		print_HexString(sm2_sig_out.r_coordinate,sizeof(sm2_sig_out.r_coordinate),"r",DEBUG_OUTPUT);
 		printf("s coordinate:\n");
-		print_HexString(sm2_sig_out.s_coordinate,sizeof(sm2_sig_out.s_coordinate),"s");
+		print_HexString(sm2_sig_out.s_coordinate,sizeof(sm2_sig_out.s_coordinate),"s",DEBUG_OUTPUT);
 		printf("\n\n");
 		printf("/*********************************************************/\n");
 	}
@@ -342,12 +342,11 @@ int main(int argc, const char *argv[])
     }
     else if((argc>1)&&(!strcmp("test",argv[1])))
     {
-        SecuredMessage_t outstruct;
-        Decode_SecuredMessage(rspstr,&outstruct,buf_out);
-        //char bufsize[4]={0};
+        unsigned char pk[64+1] = {0};
+        unsigned char compressedPK[33] = {0x03, 0x0F, 0xC1, 0x7D, 0x81, 0x24, 0x68, 0x1A, 0x71, 0xF6, 0x99, 0xC0, 0x2F, 0x3C, 0xE6, 0x51, 0x24, 
+		0xB8, 0xA8, 0x2A, 0xC5, 0x1D, 0x88, 0x7D, 0x33, 0x2D, 0x8C, 0x03, 0x03, 0xC2, 0xCB, 0xAA, 0x5A};	
+        CryptoUncompressPK(0,compressedPK, 33, pk);
 
-        //snprintf(bufsize,2+1,"%s",argv[2]);
-        //printf("bufsize=[%d]\n",HexToDec(bufsize));
     }
 	else
 	{

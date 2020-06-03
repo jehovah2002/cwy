@@ -197,8 +197,8 @@ unsigned long sm2Encrypt(unsigned char *x,
 		return 0;
 	}
 
-	print_bn("bn_x",bn_x);
-	print_bn("bn_y",bn_y);
+	print_bn("bn_x",bn_x,DEBUG_LEVEL);
+	print_bn("bn_y",bn_y,DEBUG_LEVEL);
 	if ( !(EC_POINT_set_affine_coordinates(group,P,bn_x,bn_y,ctx)))
 	{
 		goto clean_up;
@@ -329,12 +329,12 @@ unsigned long sm2Encrypt_Ex(const int keytype,
 	if((uncompress==keytype)&&(130==strlen(pub_key)))
 	{
 		str_len=HexStringToAsc(pub_key+2,pub_key_temp);
-		print_HexString(pub_key_temp,str_len,"pub_key_temp");
+		print_HexString(pub_key_temp,str_len,"pub_key_temp",DEBUG_LEVEL);
 	}
 	else if((uncompress==keytype)&&(128==strlen(pub_key)))
 	{
 		str_len=HexStringToAsc(pub_key,pub_key_temp);
-		print_HexString(pub_key_temp,str_len,"pub_key_temp");
+		print_HexString(pub_key_temp,str_len,"pub_key_temp",DEBUG_LEVEL);
 	}
 	else if((compressy0==keytype)&&(64==strlen(pub_key)))
 	{
@@ -353,8 +353,8 @@ unsigned long sm2Encrypt_Ex(const int keytype,
 	}
 	memcpy(pub_key_x,pub_key_temp,sizeof(char)*32);
 	memcpy(pub_key_y,pub_key_temp+32,sizeof(char)*32);
-	print_HexString(pub_key_x,32,"pub_key_x");
-	print_HexString(pub_key_y,32,"pub_key_y");
+	print_HexString(pub_key_x,32,"pub_key_x",DEBUG_LEVEL);
+	print_HexString(pub_key_y,32,"pub_key_y",DEBUG_LEVEL);
 	
 	return sm2Encrypt(pub_key_x,pub_key_y,encryptData,encryptDataLen,outData);
 
@@ -439,8 +439,8 @@ unsigned long sm2Decrypt(unsigned char *prikey,
 	{
 		goto clean_up;
 	}
-	print_bn("x2",x2);
-	print_bn("y2",y2);
+	print_bn("x2",x2,DEBUG_LEVEL);
+	print_bn("y2",y2,DEBUG_LEVEL);
 
 	
     //x2||y2

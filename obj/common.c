@@ -216,25 +216,26 @@ int getnum(char *instr)
 	return i;
 }
 
-void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *input_name)
+void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *input_name,int DEBUGLEVEL)
 {
-    if(DEBUG_LEVEL<=DEBUG_OUTPUT)
+    if(DEBUG_LEVEL>=DEBUGLEVEL)
     {
     	unsigned char outstr[4096*10]={0};
     	str_len=AscString2HexString((unsigned char *)input,str_len,outstr);
-    	DEBUG_PRINT("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
+    	printf("[%s] =====> [ %s ],str_len=[%d]\n",input_name,outstr,str_len);
     }
 }
 
-void print_bn(char *pchT, BIGNUM* pBG_p)
+void print_bn(char *pchT, BIGNUM* pBG_pm,int DEBUGLEVEL)
 {
-    if(DEBUG_LEVEL<=DEBUG_OUTPUT)
+    //printf("DEBUG_LEVEL=[%d],DEBUGLEVEL=[%d]\n",DEBUG_LEVEL,DEBUGLEVEL);
+    if(DEBUG_LEVEL>=DEBUGLEVEL)
     {
     	unsigned char aucY[4096*10] = {0};
     	int iYLen = 0;
     	
-    	iYLen = BN_bn2bin ( pBG_p, aucY);
-    	print_HexString(aucY, iYLen,pchT);
+    	iYLen = BN_bn2bin ( pBG_pm, aucY);
+    	print_HexString(aucY, iYLen,pchT,DEBUGLEVEL);
     }
 }
 

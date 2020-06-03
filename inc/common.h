@@ -33,7 +33,7 @@
 #define DEBUG_OUTPUT     1
 #define ERROR_OUTPUT     0
 
-#define DEBUG_LEVEL     ERROR_OUTPUT
+#define DEBUG_LEVEL     DEBUG_OUTPUT
 
 #define INFO_PRINT(info,...)\
 do{ \
@@ -83,8 +83,8 @@ int sm3_string_hash_string(const unsigned char *message, unsigned char *hash);
 
 
 
-void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *input_name);
-void print_bn(char *pchT, BIGNUM* pBG_p);
+void print_HexString(unsigned char *input,unsigned int str_len,unsigned char *input_name,int DEBUGLEVEL);
+void print_bn(char *pchT, BIGNUM* pBG_p,int DEBUGLEVEL);
 
 
 void init_curve_param(int curve_type);

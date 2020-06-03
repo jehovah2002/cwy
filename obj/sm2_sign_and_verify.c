@@ -34,19 +34,19 @@ int test_sm2_sign_and_verify(const char *msg)
 	printf(">>>>>>>>>>Now start create SM2 key pair!<<<<<<<<<<\n");
 	if ( error_code = sm2_create_key_pair(&key_pair) )
 	{
-	   printf("Create SM2 key pair failed!\n");
+	   ERROR_PRINT("Create SM2 key pair failed!\n");
 	   return (-1);
 	}
-	printf("Create SM2 key pair succeeded!\n");
-	printf("Private key:\n");
-	print_HexString(key_pair.pri_key,sizeof(key_pair.pri_key),"pri_key");
-	printf("\n\n");
-	printf("Public key:\n");
-	print_HexString(key_pair.pub_key,sizeof(key_pair.pub_key),"pub_key");
-	printf("\n\n");
+	DEBUG_PRINT("Create SM2 key pair succeeded!\n");
+	DEBUG_PRINT("Private key:\n");
+	print_HexString(key_pair.pri_key,sizeof(key_pair.pri_key),"pri_key",DEBUG_OUTPUT);
+	DEBUG_PRINT("\n\n");
+	DEBUG_PRINT("Public key:\n");
+	print_HexString(key_pair.pub_key,sizeof(key_pair.pub_key),"pub_key",DEBUG_OUTPUT);
+	DEBUG_PRINT("\n\n");
 
-	printf("/*********************************************************/\n");
-	printf(">>>>>>>>>>Now start signature!<<<<<<<<<<\n");
+	DEBUG_PRINT("/*********************************************************/\n");
+	DEBUG_PRINT(">>>>>>>>>>Now start signature!<<<<<<<<<<\n");
 	if ( error_code = sm2_sign_data(buf_arr,
 		                        msg_len,
 								g_IDA,
@@ -58,15 +58,15 @@ int test_sm2_sign_and_verify(const char *msg)
 	   printf("Create SM2 signature failed!\n");
 	   return error_code;
 	}
-	printf("Create SM2 signature succeeded!\n");
-	printf("SM2 signature:\n");
-	printf("r coordinate:\n");
-	print_HexString(sm2_sig.r_coordinate,sizeof(sm2_sig.r_coordinate),"r");
-	printf("s coordinate:\n");
-	print_HexString(sm2_sig.s_coordinate,sizeof(sm2_sig.s_coordinate),"s");
-	printf("\n\n");
-	printf("/*********************************************************/\n");
-	printf(">>>>>>>>>>Now start Verify!<<<<<<<<<<\n");
+	DEBUG_PRINT("Create SM2 signature succeeded!\n");
+	DEBUG_PRINT("SM2 signature:\n");
+	DEBUG_PRINT("r coordinate:\n");
+	print_HexString(sm2_sig.r_coordinate,sizeof(sm2_sig.r_coordinate),"r",DEBUG_OUTPUT);
+	DEBUG_PRINT("s coordinate:\n");
+	print_HexString(sm2_sig.s_coordinate,sizeof(sm2_sig.s_coordinate),"s",DEBUG_OUTPUT);
+	DEBUG_PRINT("\n\n");
+	DEBUG_PRINT("/*********************************************************/\n");
+	DEBUG_PRINT(">>>>>>>>>>Now start Verify!<<<<<<<<<<\n");
 
 	if ( error_code = sm2_verify_sig(buf_arr,
 									msg_len,
@@ -75,11 +75,11 @@ int test_sm2_sign_and_verify(const char *msg)
 									key_pair.pub_key,
 									&sm2_sig) )
 	{
-	   printf("Verify SM2 signature failed!\n");
+	   ERROR_PRINT("Verify SM2 signature failed!\n");
 	   return error_code;
 	}
-	printf("Verify SM2 signature succeeded!\n");
-	printf("\n\n");
+	DEBUG_PRINT("Verify SM2 signature succeeded!\n");
+	DEBUG_PRINT("\n\n");
 	return 0;
 }
 
@@ -102,13 +102,6 @@ int sm2_sign_data(const unsigned char *message,
 	EC_GROUP *group = NULL;
 	const EC_POINT *generator;
 	EC_POINT *k_G = NULL;
-	/*
-	print_HexString(message,message_len,"message");
-	printf("message_len=[%d]\n",message_len);
-	printf("id=[%s]\n",id);
-	printf("id_len=[%d]\n",id_len);
-	print_HexString(pub_key,65,"pub_key");
-	*/
 
 	if ( error_code = sm3_digest_with_preprocess(message,
 													message_len,
@@ -191,7 +184,7 @@ int sm2_sign_data(const unsigned char *message,
 		{
 		   goto clean_up;
 		}
-		print_bn("bn_k",bn_k);
+		print_bn("bn_k",bn_k,DEBUG_LEVEL);
 		if ( BN_is_zero(bn_k) )
 		{
 		   continue;
@@ -325,8 +318,7 @@ int sm2_sign(const unsigned char *message,
 	}
 	msg_len=HexStringToAsc(message,buf_arr);
 	HexStringToAsc(pri_key,pri_key_temp);
-	//print_HexString(pub_key_buf,65,"pub_key_buf");
-	//print_HexString(pri_key_temp,32,"pri_key_temp");
+
 	error_code = sm2_sign_data(buf_arr,
 		                        msg_len,
 								g_IDA,
@@ -334,8 +326,8 @@ int sm2_sign(const unsigned char *message,
 								pub_key_buf,
 								pri_key_temp,
 								sm2_sig);
-	print_HexString(sm2_sig->r_coordinate,32,"r_coordinate");	
-	print_HexString(sm2_sig->s_coordinate,32,"s_coordinate");
+	print_HexString(sm2_sig->r_coordinate,32,"r_coordinate",DEBUG_OUTPUT);	
+	print_HexString(sm2_sig->s_coordinate,32,"s_coordinate",DEBUG_OUTPUT);
 	
 	return error_code;
 	
@@ -360,16 +352,6 @@ int sm2_verify_sig(const unsigned char *message,
 	EC_GROUP *group = NULL;
 	const EC_POINT *generator;
 	EC_POINT *ec_pub_key_pt = NULL, *ec_pt1 = NULL, *ec_pt2 = NULL;
-
-	/*
-	print_HexString(message,message_len,"message");
-	printf("message_len=[%d]\n",message_len);
-	printf("id=[%s]\n",id);
-	printf("id_len=[%d]\n",id_len);
-	print_HexString(pub_key,65,"pub_key");
-	print_HexString(sm2_sig->r_coordinate,32,"sm2_sig->r_coordinate");
-	print_HexString(sm2_sig->s_coordinate,32,"sm2_sig->s_coordinate");
-	*/
 
 	if ( error_code = sm3_digest_with_preprocess(message,
 													message_len,
@@ -516,8 +498,8 @@ int sm2_verify_sig(const unsigned char *message,
 	{
 	   goto clean_up;
 	}
-	print_bn("bn_R",bn_R);
-	print_bn("bn_r",bn_r);
+	print_bn("bn_R",bn_R,DEBUG_LEVEL);
+	print_bn("bn_r",bn_r,DEBUG_LEVEL);
 	if ( !(BN_cmp(bn_r, bn_R)) ) /* verify signature succeed */
 	{
 	   error_code = 0;
