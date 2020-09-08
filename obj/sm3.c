@@ -93,7 +93,7 @@ int sm3_digest_z(const unsigned char *id,
 	
 	entl[0] = (id_bit_len & 0xff00) >> 8;
 	entl[1] = id_bit_len & 0xff;
-	//printf("entl[0]=[%c],entl[1]=[%c],id_bit_len=[%d]\n",entl[0],entl[1],id_bit_len);
+	printf("entl[0]=[%c],entl[1]=[%c],id_bit_len=[%d]\n",entl[0],entl[1],id_bit_len);
 	memcpy(x_coordinate, (pub_key + 1), sizeof(x_coordinate));
 	memcpy(y_coordinate, (pub_key + 1 + sizeof(x_coordinate)), sizeof(y_coordinate));
 	
@@ -105,7 +105,7 @@ int sm3_digest_z(const unsigned char *id,
 	}
     EVP_DigestInit_ex(md_ctx, md, NULL);
     EVP_DigestUpdate(md_ctx, entl, sizeof(entl));
-	//printf("entl=[%s]\n",entl);
+	printf("entl=[%s]\n",entl);
 	EVP_DigestUpdate(md_ctx, id, id_len);
 	EVP_DigestUpdate(md_ctx, g_sm2_a, sizeof(g_sm2_a));
 	EVP_DigestUpdate(md_ctx, g_sm2_b, sizeof(g_sm2_b));

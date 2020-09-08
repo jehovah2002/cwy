@@ -540,7 +540,7 @@ int sm2_verify(const unsigned char *message,
 					const unsigned char *s)
 {
 	int error_code;
-	unsigned int user_id_len = (unsigned int)(strlen((char *)g_IDA));
+	unsigned int user_id_len = (unsigned int)(strlen((char *)g_IDA))/2;
 	unsigned char pub_key_buf[65]={0};
 	unsigned char pub_key_temp[64]={0};
 	SM2_SIGNATURE_STRUCT sm2_sig;
