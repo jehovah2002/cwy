@@ -12,53 +12,53 @@ char *rspstr="02818183028100AB9C7DF39472045F0911433D434E2C434E3D436963764D6F7441
 
 void Useage()
 {
-	printf("**************************************************\n");
-	printf("***  cmd:[Hex2File] <filename> <Str>           ***\n");
-	printf("***       Save Hex string to bin file.         ***\n");
-	printf("***  cmd:[File2Hex] <filename>                 ***\n");
-	printf("***       return:<Hex String>                  ***\n");
-	printf("***       Read bin file and print Hex string   ***\n");
-	printf("***  cmd:[HexStr2Asc] <HexString>              ***\n");
-	printf("***       return:<Asc String>                  ***\n");
-	printf("***  cmd:[Asc2HexStr] <Asc String>             ***\n");
-	printf("***       return:<Hex String>                  ***\n");
-	printf("***  cmd:[Base2HexStr] <Base64 Str>            ***\n");
-	printf("***       return:<Hex String>                  ***\n");
-	printf("***  cmd:[HexStr2Base] <Hex String>            ***\n");
-	printf("***       return:<Base64 Str>                  ***\n");
-	printf("***  cmd:[senddata] <host ip> <port> <str>     ***\n");
-	printf("***       return:<Response>                    ***\n");
-	printf("***       Send HexString to server             ***\n");
-	printf("***  cmd:[sendoer] <host ip> <port> <filename> ***\n");
-	printf("***       return:<Response>                    ***\n");
-	printf("***       Send OER file to server              ***\n");
-	printf("***  cmd:[sm3file] <filename>                  ***\n");
-	printf("***       return:<SM3 String>                  ***\n");
-	printf("***  cmd:[sm3string] <HexString>               ***\n");
-	printf("***       return:<SM3 String>                  ***\n");
-	printf("***  cmd:[uncompressY] <Gx> <type>             ***\n");
-	printf("***                    type 0: xonly           ***\n");
-	printf("***                    type 1: fill            ***\n");
-	printf("***                    type 2: compressy0      ***\n");
-	printf("***                    type 3: compressy1      ***\n");
-	printf("***                    type 4: uncompress      ***\n");
-	printf("***       return:<Gy> & <Gx+Gy>                ***\n");
-	printf("***  cmd:[test_sign_and_verify] <message>      ***\n");
-	printf("***  cmd:[createkey]                           ***\n");
-	printf("***  cmd:[sign] <type> <pubkey> <msg> <prikey> ***\n");
-	printf("***                    [64/32]         [32]    ***\n");
-	printf("***       return:<r> <s>                       ***\n");
-	printf("***  cmd:[verify] <type> <pubkey> <msg> <r> <s>***\n");
-	printf("***                      [64/32]               ***\n");
-	printf("***       return:success or failed             ***\n");
-	printf("***  cmd:[encrypt] <type> <pubkey> <msg>       ***\n");
-	printf("***       return:C1||C2||C3 & datalen          ***\n");
-	printf("***  cmd:[decrypt] <prikey> <msg>              ***\n");
-	printf("***       return:decode_msg & datalen          ***\n");
-    printf("***  cmd:[showtime]                            ***\n");
-    printf("***  cmd:[ECA] <name>                          ***\n");
-    printf("***  cmd:[test]                                ***\n");
-	printf("**************************************************\n");
+	printf("********************************************************\n");
+	printf("***  cmd:[Hex2File] <filename> <Str>                 ***\n");
+	printf("***       Save Hex string to bin file.               ***\n");
+	printf("***  cmd:[File2Hex] <filename>                       ***\n");
+	printf("***       return:<Hex String>                        ***\n");
+	printf("***       Read bin file and print Hex string         ***\n");
+	printf("***  cmd:[HexStr2Asc] <HexString>                    ***\n");
+	printf("***       return:<Asc String>                        ***\n");
+	printf("***  cmd:[Asc2HexStr] <Asc String>                   ***\n");
+	printf("***       return:<Hex String>                        ***\n");
+	printf("***  cmd:[Base2HexStr] <Base64 Str>                  ***\n");
+	printf("***       return:<Hex String>                        ***\n");
+	printf("***  cmd:[HexStr2Base] <Hex String>                  ***\n");
+	printf("***       return:<Base64 Str>                        ***\n");
+	printf("***  cmd:[senddata] <host ip> <port> <str>           ***\n");
+	printf("***       return:<Response>                          ***\n");
+	printf("***       Send HexString to server                   ***\n");
+	printf("***  cmd:[sendoer] <host ip> <port> <filename>       ***\n");
+	printf("***       return:<Response>                          ***\n");
+	printf("***       Send OER file to server                    ***\n");
+	printf("***  cmd:[sm3file] <filename>                        ***\n");
+	printf("***       return:<SM3 String>                        ***\n");
+	printf("***  cmd:[sm3string] <HexString>                     ***\n");
+	printf("***       return:<SM3 String>                        ***\n");
+	printf("***  cmd:[uncompressY] <Gx> <type>                   ***\n");
+	printf("***                    type 0: xonly                 ***\n");
+	printf("***                    type 1: fill                  ***\n");
+	printf("***                    type 2: compressy0            ***\n");
+	printf("***                    type 3: compressy1            ***\n");
+	printf("***                    type 4: uncompress            ***\n");
+	printf("***       return:<Gy> & <Gx+Gy>                      ***\n");
+	printf("***  cmd:[test_sign_and_verify] <message> <IDA>      ***\n");
+	printf("***  cmd:[createkey]                                 ***\n");
+	printf("***  cmd:[sign] <type> <pubkey> <msg> <prikey> <IDA> ***\n");
+	printf("***                    [64/32]         [32]          ***\n");
+	printf("***       return:<r> <s>                             ***\n");
+	printf("***  cmd:[verify] <type> <pubkey> <msg> <r> <s> <IDA>***\n");
+	printf("***                      [64/32]                     ***\n");
+	printf("***       return:success or failed                   ***\n");
+	printf("***  cmd:[encrypt] <type> <pubkey> <msg>             ***\n");
+	printf("***       return:C1||C2||C3 & datalen                ***\n");
+	printf("***  cmd:[decrypt] <prikey> <msg>                    ***\n");
+	printf("***       return:decode_msg & datalen                ***\n");
+    printf("***  cmd:[showtime]                                  ***\n");
+    printf("***  cmd:[ECA] <name>                                ***\n");
+    printf("***  cmd:[test]                                      ***\n");
+	printf("********************************************************\n");
 
 }
 
@@ -76,6 +76,8 @@ int main(int argc, const char *argv[])
 	unsigned long buf_long=0;
 
     CicvserverRespond_t serverRespond;
+    struct timeval tvStart, tvNow;
+    double use_sec = 0;
 
 	//int msg_len;
 	int error_code;
@@ -176,7 +178,7 @@ int main(int argc, const char *argv[])
 	else if((argc>1)&&(!strcmp("test_sign_and_verify",argv[1])))
 	{
 		//msg_len=HexStringToAsc(argv[2],buf_arr);
-		if ( error_code = test_sm2_sign_and_verify(argv[2]) )
+		if ( error_code = test_sm2_sign_and_verify(argv[2],argv[3]))
 		{
 			printf("Test create SM2 key pair, sign data and verify signature failed!\n");
 			return error_code;
@@ -212,9 +214,13 @@ int main(int argc, const char *argv[])
 			printf("Input error !\n");
 			return 0;
 		}
+        printf("ida=[%s]\n",argv[6]);
+	    buf_len=HexStringToAsc(argv[6],buf_arr);
+	    printf("buf_ida=[%s]\n",buf_arr);
+	    print_HexString(buf_arr,buf_len,"buf_ida",DEBUG_OUTPUT);
 		if ( error_code = sm2_sign(argv[4],
 									atoi(argv[2]),
-									g_IDA,
+									buf_arr,
 									argv[3],
 									argv[5],
 									&sm2_sig_out))
@@ -225,9 +231,9 @@ int main(int argc, const char *argv[])
 		printf("Create SM2 signature succeeded!\n");
 		printf("SM2 signature:\n");
 		printf("r coordinate:\n");
-		print_HexString(sm2_sig_out.r_coordinate,sizeof(sm2_sig_out.r_coordinate),"r",DEBUG_OUTPUT);
+		print_HexString(sm2_sig_out.r_coordinate,sizeof(sm2_sig_out.r_coordinate),"r",ERROR_OUTPUT);
 		printf("s coordinate:\n");
-		print_HexString(sm2_sig_out.s_coordinate,sizeof(sm2_sig_out.s_coordinate),"s",DEBUG_OUTPUT);
+		print_HexString(sm2_sig_out.s_coordinate,sizeof(sm2_sig_out.s_coordinate),"s",ERROR_OUTPUT);
 		printf("\n\n");
 		printf("/*********************************************************/\n");
 	}
@@ -240,16 +246,21 @@ int main(int argc, const char *argv[])
 		}
 		//memcpy(sm2_sig_in->r_coordinate, argv[5], sizeof(sm2_sig_in->r_coordinate));
 		//memcpy(sm2_sig_in->s_coordinate, argv[6], sizeof(sm2_sig_in->s_coordinate));
-		if ( error_code = sm2_verify(argv[4],
-									atoi(argv[2]),
-									g_IDA,
-									argv[3],
-									argv[5],
-									argv[6]))
-		{
-			printf("Verify SM2 signature failed! [%d]\n",error_code);
-			return error_code;
-		}
+		DEBUG_PRINT("ida=[%s]\n",argv[7]);
+	    buf_len=HexStringToAsc(argv[7],buf_arr);
+	    DEBUG_PRINT("buf_ida=[%s]\n",buf_arr);
+	    print_HexString(buf_arr,buf_len,"buf_ida",DEBUG_OUTPUT);
+        if ( error_code = sm2_verify(argv[4],
+                                            atoi(argv[2]),
+                                            buf_arr,
+                                            argv[3],
+                                            argv[5],
+                                            argv[6]))
+        {
+            printf("Verify SM2 signature failed! [%d]\n",error_code);
+            return error_code;
+        }
+
         printf("Verify SM2 signature success!\n");
 		printf("/*********************************************************/\n");
 

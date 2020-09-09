@@ -332,8 +332,8 @@ int UncompressCacheGet(unsigned long long xdata, unsigned char* pk)
 		{
 			memcpy(pk, g_uncompressedPKCache->uncompressPK[i].pk, 64);
 			DEBUG_PRINT("    UncompressCacheGet: slot = %d", i);
-			print_HexString((unsigned char*)&xdata, 8, "    Found X_DATA: ",DEBUG_LEVEL);
-			print_HexString(pk, 64, "    Cache_PK: ",DEBUG_LEVEL);
+			print_HexString((unsigned char*)&xdata, 8, "    Found X_DATA: ",DEBUG_OUTPUT);
+			print_HexString(pk, 64, "    Cache_PK: ",DEBUG_OUTPUT);
 			return 0;
 		}
 	}
@@ -397,7 +397,7 @@ int CryptoUncompressPK(int cacheFlag, unsigned char* compressed, int len, unsign
 		goto err;
 	}
 
-	print_HexString(compressed, len, "Compressed-PK: ",DEBUG_LEVEL);
+	print_HexString(compressed, len, "Compressed-PK: ",DEBUG_OUTPUT);
 	if (!EC_POINT_oct2point(group, ptPubKey, compressed, len, ctx))
 	{
 		ret = -1;
@@ -417,8 +417,8 @@ int CryptoUncompressPK(int cacheFlag, unsigned char* compressed, int len, unsign
 	if( buf_len!= 32)
 		goto err;
 	ret = 0;
-	print_HexString(pk, 32, "Uncompress-X: ",DEBUG_LEVEL);
-	print_HexString(pk+32, 32, "Uncompress-Y: ",DEBUG_LEVEL);
+	print_HexString(pk, 32, "Uncompress-X: ",DEBUG_OUTPUT);
+	print_HexString(pk+32, 32, "Uncompress-Y: ",DEBUG_OUTPUT);
 
 	if (cacheFlag)
 		UncompressPKCachePut(xdata, pk);

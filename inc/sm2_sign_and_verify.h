@@ -6,7 +6,7 @@
   extern "C" {
 #endif
 
-int test_sm2_sign_and_verify(const char *msg);
+int test_sm2_sign_and_verify(const char *msg,const char *ida);
 
 
 /**************************************************

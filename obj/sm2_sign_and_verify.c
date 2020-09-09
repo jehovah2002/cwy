@@ -15,7 +15,7 @@
 
 
 
-int test_sm2_sign_and_verify(const char *msg)
+int test_sm2_sign_and_verify(const char *msg,const char *ida)
 {
 	int error_code;
 
@@ -25,12 +25,19 @@ int test_sm2_sign_and_verify(const char *msg)
 	int i;
 	int msg_len;
 	unsigned char buf_arr[4096]={0};
-	/*
-	printf("msg=[%s]\n",msg);
+    unsigned char buf_ida[4096]={0};
+	
+	DEBUG_PRINT("msg=[%s]\n",msg);
 	msg_len=HexStringToAsc(msg,buf_arr);
-	printf("buf_arr=[%s]\n",buf_arr);
-	print_HexString(buf_arr,msg_len,"buf_arr");
-	*/
+	DEBUG_PRINT("buf_arr=[%s]\n",buf_arr);
+	print_HexString(buf_arr,msg_len,"buf_arr",DEBUG_OUTPUT);
+    
+    DEBUG_PRINT("ida=[%s]\n",ida);
+	msg_len=HexStringToAsc(ida,buf_ida);
+	DEBUG_PRINT("buf_ida=[%s]\n",buf_ida);
+	print_HexString(buf_ida,msg_len,"buf_ida",DEBUG_OUTPUT);
+    
+	
 	printf(">>>>>>>>>>Now start create SM2 key pair!<<<<<<<<<<\n");
 	if ( error_code = sm2_create_key_pair(&key_pair) )
 	{
@@ -49,7 +56,7 @@ int test_sm2_sign_and_verify(const char *msg)
 	DEBUG_PRINT(">>>>>>>>>>Now start signature!<<<<<<<<<<\n");
 	if ( error_code = sm2_sign_data(buf_arr,
 		                        msg_len,
-								g_IDA,
+								buf_ida,
 								user_id_len,
 								key_pair.pub_key,
 								key_pair.pri_key,
@@ -70,7 +77,7 @@ int test_sm2_sign_and_verify(const char *msg)
 
 	if ( error_code = sm2_verify_sig(buf_arr,
 									msg_len,
-									g_IDA,
+									buf_ida,
 									user_id_len,
 									key_pair.pub_key,
 									&sm2_sig) )
@@ -184,7 +191,7 @@ int sm2_sign_data(const unsigned char *message,
 		{
 		   goto clean_up;
 		}
-		print_bn("bn_k",bn_k,DEBUG_LEVEL);
+		print_bn("bn_k",bn_k,DEBUG_OUTPUT);
 		if ( BN_is_zero(bn_k) )
 		{
 		   continue;
@@ -282,7 +289,7 @@ int sm2_sign(const unsigned char *message,
 					SM2_SIGNATURE_STRUCT *sm2_sig)
 {
 	int error_code;
-	unsigned int user_id_len = (unsigned int)(strlen((char *)g_IDA));
+	unsigned int user_id_len = (unsigned int)(strlen((char *)id));
 	unsigned char pub_key_buf[65]={0};
 	unsigned char pub_key_temp[64]={0};
 	unsigned char buf_arr[4096]={0};
@@ -321,7 +328,7 @@ int sm2_sign(const unsigned char *message,
 
 	error_code = sm2_sign_data(buf_arr,
 		                        msg_len,
-								g_IDA,
+								id,
 								user_id_len,
 								pub_key_buf,
 								pri_key_temp,
@@ -362,6 +369,8 @@ int sm2_verify_sig(const unsigned char *message,
 	{
 	   return error_code;
 	}
+
+    print_HexString(digest, 32, "====ZA====",DEBUG_OUTPUT);
 
 	memcpy(pub_key_x, (pub_key + 1), sizeof(pub_key_x));
 	memcpy(pub_key_y, (pub_key + 1 + sizeof(pub_key_x)), sizeof(pub_key_y));
@@ -498,8 +507,8 @@ int sm2_verify_sig(const unsigned char *message,
 	{
 	   goto clean_up;
 	}
-	print_bn("bn_R",bn_R,DEBUG_LEVEL);
-	print_bn("bn_r",bn_r,DEBUG_LEVEL);
+	print_bn("bn_R",bn_R,DEBUG_OUTPUT);
+	print_bn("bn_r",bn_r,DEBUG_OUTPUT);
 	if ( !(BN_cmp(bn_r, bn_R)) ) /* verify signature succeed */
 	{
 	   error_code = 0;
@@ -540,7 +549,8 @@ int sm2_verify(const unsigned char *message,
 					const unsigned char *s)
 {
 	int error_code;
-	unsigned int user_id_len = (unsigned int)(strlen((char *)g_IDA))/2;
+	unsigned int user_id_len = (unsigned int)(strlen((char *)id));
+    DEBUG_PRINT("user_id_len=[%d]\n",user_id_len);
 	unsigned char pub_key_buf[65]={0};
 	unsigned char pub_key_temp[64]={0};
 	SM2_SIGNATURE_STRUCT sm2_sig;
@@ -586,7 +596,7 @@ int sm2_verify(const unsigned char *message,
 	//print_HexString(pub_key_buf,65,"pub_key_buf");
 	if(error_code = sm2_verify_sig(buf_arr,
 		                        msg_len,
-								g_IDA,
+								id,
 								user_id_len,
 								pub_key_buf,
 								&sm2_sig))

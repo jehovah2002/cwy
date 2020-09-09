@@ -33,7 +33,7 @@
 #define DEBUG_OUTPUT     1
 #define ERROR_OUTPUT     0
 
-#define DEBUG_LEVEL     DEBUG_OUTPUT
+#define DEBUG_LEVEL     ERROR_OUTPUT
 
 #define INFO_PRINT(info,...)\
 do{ \
@@ -138,8 +138,8 @@ unsigned char g_sm2_n[32];
 unsigned char g_sm2_Gx[32];
 unsigned char g_sm2_Gy[32];
 
-//#define g_IDA "China"
-#define g_IDA "800A709AFABF11BB27367CB5A4EB4D5F7C7FDD89797B50F5468280669CA1F54E"
+#define g_IDA "China"
+//#define g_IDA "1234567812345678"
 
 
 typedef enum
