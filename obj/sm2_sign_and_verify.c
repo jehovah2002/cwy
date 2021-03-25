@@ -1,12 +1,3 @@
-/**************************************************
-* File name: sm2_sign_and_verify.c
-* Author: HAN Wei
-* Author's blog: https://blog.csdn.net/henter/
-* Date: Nov 19th, 2018
-* Description: implement SM2 sign data and verify
-    signature functions
-**************************************************/
-
 #include "common.h"
 #include "sm3.h"
 #include "sm2_sign_and_verify.h"
